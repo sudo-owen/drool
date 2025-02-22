@@ -1,8 +1,6 @@
-<style>
 body {
   font-family: Arial, sans-serif;
   padding: 20px;
-  max-width: 1200px;
   margin: 0 auto;
 }
 .container {
@@ -39,7 +37,7 @@ table {
 th,
 td {
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 4px 6px;
   text-align: left;
 }
 th {
@@ -110,64 +108,45 @@ tr:nth-child(even) {
   margin-bottom: 10px;
   display: none;
 }
-.success {
-  background-color: #dff0d8;
-  color: #3c763d;
-  border: 1px solid #d6e9c6;
-}
-.error {
-  background-color: #f2dede;
-  color: #a94442;
-  border: 1px solid #ebccd1;
-}
-.modal {
-  display: none;
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-  animation: slideIn 0.3s ease-out;
+#data-table img {
+  width: 32px;
+  vertical-align: middle;
+  image-rendering: pixelated;
 }
 
-.modal-content {
-  background-color: white;
-  padding: 15px 20px;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  max-width: 300px;
+#attack-table img {
+  width: 32px;
+  vertical-align: middle;
+  image-rendering: pixelated;
 }
 
-.modal.success .modal-content {
-  background-color: #dff0d8;
-  color: #3c763d;
-  border: 1px solid #d6e9c6;
+#attack-table th {
+  white-space: nowrap;
+  min-width: 100px;
 }
 
-.modal.error .modal-content {
-  background-color: #f2dede;
-  color: #a94442;
-  border: 1px solid #ebccd1;
+/* For the attack table */
+#attack-table td {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+  padding: 2px 4px;  /* Even smaller padding for damage numbers */
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+#attack-table th {
+  min-width: unset;  /* Remove the previous min-width */
+  width: 1%;
+  white-space: nowrap;
 }
 
-@keyframes slideOut {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
+/* Make sure the first column (defender names) doesn't get too narrow */
+#attack-table tr th:first-child {
+  min-width: 80px;
 }
-</style>
+
+
+
+
+
+
+

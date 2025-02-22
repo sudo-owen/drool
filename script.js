@@ -9,23 +9,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const exportBtn = document.getElementById("export-btn");
     const tabs = document.querySelectorAll(".tab");
     const tabContents = document.querySelectorAll(".tab-content");
-    const messageEl = document.getElementById("message");
 
-    // Default columns
-    const defaultColumns = [
-      { name: "Name", type: "text", editable: true },
-      { name: "HP", type: "number", editable: true },
-      { name: "Attack", type: "number", editable: true },
-      { name: "Defense", type: "number", editable: true },
-      { name: "SpecialAttack", type: "number", editable: true },
-      { name: "SpecialDefense", type: "number", editable: true },
-    ];
+    let columns = defaultMonsterData.columns;
+    let data = [...defaultMonsterData.data];
 
-    let columns = [...defaultColumns];
-    let data = [];
+    // Sort vars
+    let columnToSort = undefined;
+    let columnDirection = false;
 
-    // Initialize with some sample data
-    initializeSampleData();
+    // Damage table sort vars
+    let damageColumnToSort = undefined; // 'phys' or 'spec'
+    let damageAttackerIndex = undefined; // index of the attacker column
+    let damageDirection = false; // false for ascending, true for descending
 
     // Event listeners
     importBtn.addEventListener("click", () => fileInput.click());
@@ -48,10 +43,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initialize tables
     renderDataTable();
+    calculateDamage(); // Add this line to calculate initial damage table
 
     // Functions
-    function initializeSampleData() {}
-
     function renderDataTable() {
       const tbody = dataTable.querySelector("tbody");
       tbody.innerHTML = "";
@@ -62,6 +56,16 @@ document.addEventListener("DOMContentLoaded", function () {
       // Render data rows
       data.forEach((row, rowIndex) => {
         const tr = document.createElement("tr");
+
+        // Add image cell before other columns
+        const imgTd = document.createElement("td");
+        const img = document.createElement("img");
+        const monsterName = (row.Name || "").toLowerCase();
+        img.src = `imgs/${monsterName}_mini.gif`;
+        img.alt = row.Name || "";
+        img.onerror = () => img.style.display = 'none'; // Hide if image not found
+        imgTd.appendChild(img);
+        tr.appendChild(imgTd);
 
         columns.forEach((column) => {
           const td = document.createElement("td");
@@ -89,7 +93,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Add action buttons
         const actionsTd = document.createElement("td");
-
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "Delete";
         deleteBtn.style.backgroundColor = "#f44336";
@@ -105,16 +108,17 @@ document.addEventListener("DOMContentLoaded", function () {
         tbody.appendChild(tr);
       });
 
-      // Add this at the end of the function
       updateStatsHeatmap();
     }
-
-    let columnToSort = undefined;
-    let columnDirection = false;
 
     function updateTableHeaders() {
       const headerRow = dataTable.querySelector("thead tr");
       headerRow.innerHTML = "";
+
+      // Add image column header
+      const imgHeader = document.createElement("th");
+      imgHeader.textContent = "Icon";
+      headerRow.appendChild(imgHeader);
 
       columns.forEach((column) => {
         const th = document.createElement("th");
@@ -135,7 +139,6 @@ document.addEventListener("DOMContentLoaded", function () {
           sortIndicator.innerHTML = "";
           
           headerContent.addEventListener("click", () => {
-            // If currently neutral or ascending, sort descending
             if (columnToSort === column.name && columnDirection === true) {
               columnToSort = column.name;
               columnDirection = false;
@@ -259,59 +262,11 @@ document.addEventListener("DOMContentLoaded", function () {
       if (hasRequiredColumns()) {
         calculateDamage();
       }
-
-      showMessage("Row added successfully!", "success");
     }
 
     function deleteRow(rowIndex) {
       data.splice(rowIndex, 1);
       renderDataTable();
-      showMessage("Row deleted successfully!", "success");
-    }
-
-    function addColumn() {
-      const columnName = prompt("Enter column name:");
-
-      if (columnName && columnName.trim() !== "") {
-        // Check if column already exists
-        if (columns.some((col) => col.name === columnName)) {
-          showMessage("Column with this name already exists!", "error");
-          return;
-        }
-
-        const columnType = confirm("Is this a numeric column?")
-          ? "number"
-          : "text";
-
-        columns.push({
-          name: columnName,
-          type: columnType,
-          editable: true,
-        });
-
-        // Add the new column to each data row
-        data.forEach((row) => {
-          row[columnName] = columnType === "number" ? 0 : "";
-        });
-
-        renderDataTable();
-        showMessage("Column added successfully!", "success");
-      }
-    }
-
-    function deleteColumn(columnIndex) {
-      const columnName = columns[columnIndex].name;
-
-      // Remove column from columns array
-      columns.splice(columnIndex, 1);
-
-      // Remove column data from each row
-      data.forEach((row) => {
-        delete row[columnName];
-      });
-
-      renderDataTable();
-      showMessage("Column deleted successfully!", "success");
     }
 
     function calculateDamage() {
@@ -328,30 +283,44 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
       if (missingColumns.length > 0) {
-        showMessage(
-          `Missing required columns: ${missingColumns.join(", ")}`,
-          "error"
-        );
         return;
       }
 
       renderCombinedDamageTable();
-      showMessage("Damage calculations completed!", "success");
     }
 
     function renderCombinedDamageTable() {
       attackTable.innerHTML = "";
 
-      // Create header row with Names
+      // Create header row with "Atk ↓ / Def →" in corner
       const headerRow = document.createElement("tr");
       const cornerCell = document.createElement("th");
-      cornerCell.textContent = "Defender ↓ / Attacker →";
+      cornerCell.textContent = "Atk ↓ / Def →";
       headerRow.appendChild(cornerCell);
 
-      data.forEach((row) => {
+      // Create headers for each defender (columns)
+      data.forEach((defenderRow) => {
         const th = document.createElement("th");
-        th.textContent = row.Name || "Unknown";
         th.colSpan = "2"; // Span both physical and special cells
+        
+        const headerContent = document.createElement("div");
+        headerContent.style.display = "flex";
+        headerContent.style.flexDirection = "column";
+        headerContent.style.alignItems = "center";
+        headerContent.style.gap = "4px";
+        
+        const img = document.createElement("img");
+        const monsterName = (defenderRow.Name || "").toLowerCase();
+        img.src = `imgs/${monsterName}_mini.gif`;
+        img.alt = defenderRow.Name || "";
+        img.onerror = () => img.style.display = 'none';
+        
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = `🛡️ ${defenderRow.Name || "Unknown"}`;
+        
+        headerContent.appendChild(img);
+        headerContent.appendChild(nameSpan);
+        th.appendChild(headerContent);
         headerRow.appendChild(th);
       });
 
@@ -362,14 +331,39 @@ document.addEventListener("DOMContentLoaded", function () {
       const emptyCorner = document.createElement("th");
       subheaderRow.appendChild(emptyCorner);
 
-      data.forEach(() => {
+      data.forEach((_, columnIndex) => {
         const physHeader = document.createElement("th");
         physHeader.textContent = "Phys";
         physHeader.style.fontSize = "0.8em";
+        physHeader.style.cursor = "pointer";
         
         const specHeader = document.createElement("th");
         specHeader.textContent = "Spec";
         specHeader.style.fontSize = "0.8em";
+        specHeader.style.cursor = "pointer";
+        
+        // Add click handlers for sorting
+        physHeader.addEventListener("click", () => {
+          if (damageColumnToSort === "phys" && damageAttackerIndex === columnIndex && damageDirection === true) {
+            damageDirection = false;
+          } else {
+            damageDirection = true;
+          }
+          damageColumnToSort = "phys";
+          damageAttackerIndex = columnIndex;
+          sortDamageTable();
+        });
+        
+        specHeader.addEventListener("click", () => {
+          if (damageColumnToSort === "spec" && damageAttackerIndex === columnIndex && damageDirection === true) {
+            damageDirection = false;
+          } else {
+            damageDirection = true;
+          }
+          damageColumnToSort = "spec";
+          damageAttackerIndex = columnIndex;
+          sortDamageTable();
+        });
         
         subheaderRow.appendChild(physHeader);
         subheaderRow.appendChild(specHeader);
@@ -379,8 +373,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Get min/max values for color scaling
       const allDamageValues = [];
-      data.forEach(defenderRow => {
-        data.forEach(attackerRow => {
+      data.forEach(attackerRow => {
+        data.forEach(defenderRow => {
           const physDamage = defenderRow.HP / (attackerRow.Attack / defenderRow.Defense);
           const specDamage = defenderRow.HP / (attackerRow.SpecialAttack / defenderRow.SpecialDefense);
           allDamageValues.push(physDamage, specDamage);
@@ -390,17 +384,33 @@ document.addEventListener("DOMContentLoaded", function () {
       const minDamage = Math.min(...allDamageValues);
       const maxDamage = Math.max(...allDamageValues);
 
-      // Create data rows
-      data.forEach((defenderRow) => {
+      // Create data rows (now attackers)
+      data.forEach((attackerRow) => {
         const tr = document.createElement("tr");
 
-        // Row header
+        // Row header with image and name
         const rowHeader = document.createElement("th");
-        rowHeader.textContent = defenderRow.Name || "Unknown";
+        const headerContent = document.createElement("div");
+        headerContent.style.display = "flex";
+        headerContent.style.alignItems = "center";
+        headerContent.style.gap = "8px";
+        
+        const img = document.createElement("img");
+        const monsterName = (attackerRow.Name || "").toLowerCase();
+        img.src = `imgs/${monsterName}_mini.gif`;
+        img.alt = attackerRow.Name || "";
+        img.onerror = () => img.style.display = 'none';
+        
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = `⚔️ ${attackerRow.Name || "Unknown"}`;
+        
+        headerContent.appendChild(img);
+        headerContent.appendChild(nameSpan);
+        rowHeader.appendChild(headerContent);
         tr.appendChild(rowHeader);
 
-        // Calculate damage cells
-        data.forEach((attackerRow) => {
+        // Calculate damage cells for each defender
+        data.forEach((defenderRow) => {
           // Physical damage cell
           const physTd = document.createElement("td");
           const physDamage = defenderRow.HP / (attackerRow.Attack / defenderRow.Defense);
@@ -411,10 +421,10 @@ document.addEventListener("DOMContentLoaded", function () {
           const specDamage = defenderRow.HP / (attackerRow.SpecialAttack / defenderRow.SpecialDefense);
           specTd.textContent = specDamage.toFixed(1);
 
-          // Add color scaling (light colors)
+          // Add color scaling
           const getColorIntensity = (value) => {
             const normalized = (value - minDamage) / (maxDamage - minDamage);
-            return Math.floor(normalized * 40); // Using 40 for very light colors
+            return Math.floor((1 - normalized) * 40);
           };
 
           physTd.style.backgroundColor = `rgba(255, 99, 71, ${getColorIntensity(physDamage)}%)`;
@@ -456,7 +466,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const lines = csvContent.split(/\r\n|\n/);
 
       if (lines.length < 2) {
-        showMessage("CSV file appears to be empty or invalid", "error");
         return;
       }
 
@@ -524,13 +533,11 @@ document.addEventListener("DOMContentLoaded", function () {
         calculateDamage();
       }
 
-      showMessage("CSV imported successfully!", "success");
       fileInput.value = "";
     }
 
     function exportToCsv() {
       if (data.length === 0) {
-        showMessage("No data to export", "error");
         return;
       }
 
@@ -569,33 +576,28 @@ document.addEventListener("DOMContentLoaded", function () {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-      showMessage("CSV exported successfully!", "success");
     }
 
-    function showMessage(message, type) {
-      const modal = document.getElementById("modal");
-      const modalMessage = document.getElementById("modal-message");
+    function exportToJs() {
+      if (data.length === 0) {
+        return;
+      }
 
-      // Reset animation
-      modal.style.animation = "none";
-      modal.offsetHeight; // Trigger reflow
+      const jsContent = `const defaultMonsterData = {
+  columns: ${JSON.stringify(columns, null, 2)},
+  data: ${JSON.stringify(data, null, 2)}
+};`;
 
-      // Set message and type
-      modalMessage.textContent = message;
-      modal.className = "modal " + type;
-
-      // Show modal with slide-in animation
-      modal.style.display = "block";
-      modal.style.animation = "slideIn 0.3s ease-out";
-
-      // Hide after delay with slide-out animation
-      setTimeout(() => {
-        modal.style.animation = "slideOut 0.3s ease-out";
-        setTimeout(() => {
-          modal.style.display = "none";
-        }, 300);
-      }, 1000);
+      const blob = new Blob([jsContent], {
+        type: "text/javascript;charset=utf-8;"
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "default-data.js");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     function applyCellHeatmap(cell, value, minValue, maxValue) {
@@ -649,61 +651,46 @@ document.addEventListener("DOMContentLoaded", function () {
       updateStatsHeatmap();
     }
 
-    // Modify the renderDataTable function to call updateStatsHeatmap
-    function renderDataTable() {
-      const tbody = dataTable.querySelector("tbody");
-      tbody.innerHTML = "";
-
-      // Update headers first
-      updateTableHeaders();
-
-      // Render data rows
-      data.forEach((row, rowIndex) => {
-        const tr = document.createElement("tr");
-
-        columns.forEach((column) => {
-          const td = document.createElement("td");
-
-          if (column.editable) {
-            td.contentEditable = true;
-            td.className = "editable";
-            td.dataset.row = rowIndex;
-            td.dataset.column = column.name;
-
-            if (column.type === "number") {
-              td.textContent = row[column.name] || 0;
-              td.addEventListener("input", validateNumberInput);
-            } else {
-              td.textContent = row[column.name] || "";
-            }
-
-            td.addEventListener("blur", updateData);
-          } else {
-            td.textContent = row[column.name] || "";
-          }
-
-          tr.appendChild(td);
-        });
-
-        // Add action buttons
-        const actionsTd = document.createElement("td");
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.style.backgroundColor = "#f44336";
-        deleteBtn.addEventListener("click", () => {
-          if (confirm("Are you sure you want to delete this row?")) {
-            deleteRow(rowIndex);
-          }
-        });
-
-        actionsTd.appendChild(deleteBtn);
-        tr.appendChild(actionsTd);
-
-        tbody.appendChild(tr);
+    function sortDamageTable() {
+      // Store the current table structure
+      const currentRows = Array.from(attackTable.querySelectorAll('tr')).slice(2); // Skip header and subheader rows
+      
+      // Create array of objects containing defender data and damage values
+      const sortableData = currentRows.map(row => {
+        const defenderName = row.querySelector('th span').textContent;
+        const defenderData = data.find(d => d.Name === defenderName);
+        const attackerRow = data[damageAttackerIndex];
+        const physDamage = defenderData.HP / (attackerRow.Attack / defenderData.Defense);
+        const specDamage = defenderData.HP / (attackerRow.SpecialAttack / defenderData.SpecialDefense);
+        
+        return {
+          row: row,
+          physDamage,
+          specDamage
+        };
       });
 
-      // Add this at the end of the function
-      updateStatsHeatmap();
+      // Sort the rows
+      sortableData.sort((a, b) => {
+        const valueA = damageColumnToSort === "phys" ? a.physDamage : a.specDamage;
+        const valueB = damageColumnToSort === "phys" ? b.physDamage : b.specDamage;
+        
+        return damageDirection ? valueB - valueA : valueA - valueB;
+      });
+
+      // Remove existing rows (except headers)
+      currentRows.forEach(row => row.remove());
+
+      // Append sorted rows back to the table
+      sortableData.forEach(item => {
+        attackTable.appendChild(item.row);
+      });
     }
+
+    // Add new export button to HTML
+    const exportJsBtn = document.createElement("button");
+    exportJsBtn.id = "export-js-btn";
+    exportJsBtn.textContent = "Export as JS";
+    exportJsBtn.addEventListener("click", exportToJs);
+    document.querySelector(".controls").appendChild(exportJsBtn);
   });
