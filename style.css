@@ -1,0 +1,173 @@
+<style>
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+button {
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #45a049;
+}
+.file-input {
+  display: none;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+th {
+  background-color: #f2f2f2;
+  position: sticky;
+  top: 0;
+}
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+.editable:hover {
+  background-color: #f0f7ff;
+}
+.editable:focus {
+  background-color: #e0f0ff;
+  outline: none;
+}
+.tabs {
+  display: flex;
+  margin-bottom: 10px;
+}
+.tab {
+  padding: 8px 16px;
+  background-color: #f2f2f2;
+  border: 1px solid #ddd;
+  border-bottom: none;
+  cursor: pointer;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  margin-right: 4px;
+}
+.tab.active {
+  background-color: #fff;
+  border-bottom: 1px solid white;
+  margin-bottom: -1px;
+  z-index: 1;
+}
+.tab-content {
+  display: none;
+  border: 1px solid #ddd;
+  padding: 15px;
+  overflow-x: auto;
+}
+.tab-content.active {
+  display: block;
+}
+.results-container {
+  overflow-x: auto;
+}
+.highlight {
+  background-color: #fffde7 !important;
+}
+.column-header {
+  cursor: default;
+  user-select: none;
+  position: relative;
+}
+
+.column-header span {
+  cursor: pointer;
+}
+
+.column-header span:hover {
+  opacity: 0.7;
+}
+#message {
+  padding: 10px;
+  margin-bottom: 10px;
+  display: none;
+}
+.success {
+  background-color: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #d6e9c6;
+}
+.error {
+  background-color: #f2dede;
+  color: #a94442;
+  border: 1px solid #ebccd1;
+}
+.modal {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 15px 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+}
+
+.modal.success .modal-content {
+  background-color: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #d6e9c6;
+}
+
+.modal.error .modal-content {
+  background-color: #f2dede;
+  color: #a94442;
+  border: 1px solid #ebccd1;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+</style>
