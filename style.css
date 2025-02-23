@@ -144,6 +144,23 @@ tr:nth-child(even) {
   min-width: 80px;
 }
 
+.damage-controls {
+  margin-bottom: 10px;
+}
+
+.damage-controls label {
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.damage-controls input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.column-hidden {
+  display: none;
+}
+
 
 
 

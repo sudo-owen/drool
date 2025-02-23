@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const exportBtn = document.getElementById("export-btn");
     const tabs = document.querySelectorAll(".tab");
     const tabContents = document.querySelectorAll(".tab-content");
+    const showPhysCheckbox = document.getElementById("show-phys");
+    const showSpecCheckbox = document.getElementById("show-spec");
 
     let columns = defaultMonsterData.columns;
     let data = [...defaultMonsterData.data];
@@ -28,6 +30,8 @@ document.addEventListener("DOMContentLoaded", function () {
     addRowBtn.addEventListener("click", addRow);
     calculateBtn.addEventListener("click", calculateDamage);
     exportBtn.addEventListener("click", exportToCsv);
+    showPhysCheckbox.addEventListener("change", updateDamageTableVisibility);
+    showSpecCheckbox.addEventListener("change", updateDamageTableVisibility);
 
     // Tab navigation
     tabs.forEach((tab) => {
@@ -445,6 +449,8 @@ document.addEventListener("DOMContentLoaded", function () {
         cell.style.border = "1px solid #ddd";
         cell.style.textAlign = "center";
       }
+
+      updateDamageTableVisibility();
     }
 
     function handleFileImport(event) {
@@ -657,14 +663,19 @@ document.addEventListener("DOMContentLoaded", function () {
       
       // Create array of objects containing defender data and damage values
       const sortableData = currentRows.map(row => {
-        const defenderName = row.querySelector('th span').textContent;
+        // Remove the emoji from the name to find the correct data
+        const defenderName = row.querySelector('th span').textContent.replace('⚔️ ', '');
         const defenderData = data.find(d => d.Name === defenderName);
         const attackerRow = data[damageAttackerIndex];
+        
+        // Make sure we have valid data before calculating
+        if (!defenderData || !attackerRow) return { row, physDamage: Infinity, specDamage: Infinity };
+        
         const physDamage = defenderData.HP / (attackerRow.Attack / defenderData.Defense);
         const specDamage = defenderData.HP / (attackerRow.SpecialAttack / defenderData.SpecialDefense);
         
         return {
-          row: row,
+          row,
           physDamage,
           specDamage
         };
@@ -685,6 +696,49 @@ document.addEventListener("DOMContentLoaded", function () {
       sortableData.forEach(item => {
         attackTable.appendChild(item.row);
       });
+    }
+
+    function updateDamageTableVisibility() {
+      const showPhys = showPhysCheckbox.checked;
+      const showSpec = showSpecCheckbox.checked;
+      
+      // Update column headers
+      const headerCells = attackTable.querySelectorAll("tr:nth-child(1) th");
+      const subheaderCells = attackTable.querySelectorAll("tr:nth-child(2) th");
+      
+      // Skip first cell (corner cell)
+      for (let i = 1; i < headerCells.length; i++) {
+        headerCells[i].colSpan = (showPhys && showSpec) ? "2" : "1";
+        if (!showPhys && !showSpec) {
+          headerCells[i].style.display = "none";
+        } else {
+          headerCells[i].style.display = "";
+        }
+      }
+      
+      // Handle subheader and data cells
+      const rows = attackTable.querySelectorAll("tr");
+      rows.forEach((row, rowIndex) => {
+        if (rowIndex < 2) return; // Skip header rows
+        
+        const cells = row.querySelectorAll("td");
+        cells.forEach((cell, cellIndex) => {
+          if (cellIndex % 2 === 0) { // Physical damage cells
+            cell.style.display = showPhys ? "" : "none";
+          } else { // Special damage cells
+            cell.style.display = showSpec ? "" : "none";
+          }
+        });
+      });
+      
+      // Handle subheader cells (Phys/Spec labels)
+      for (let i = 1; i < subheaderCells.length; i++) {
+        if (i % 2 === 1) { // Physical headers
+          subheaderCells[i].style.display = showPhys ? "" : "none";
+        } else { // Special headers
+          subheaderCells[i].style.display = showSpec ? "" : "none";
+        }
+      }
     }
 
     // Add new export button to HTML
