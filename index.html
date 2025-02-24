@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>drool</title>
-    <link rel="stylesheet" href="style.css">  
+    <link rel="stylesheet" href="style.css" />
     <script src="default-data.js"></script>
     <script src="script.js"></script>
   </head>
@@ -12,7 +12,7 @@
     <div class="container">
       <h1>mons</h1>
 
-      <div id="message"></div>
+      <div>we do a little calculating</div>
 
       <div class="controls">
         <button id="import-btn">Import CSV</button>
@@ -56,16 +56,24 @@
         <div class="results-container">
           <div class="damage-controls">
             <label>
-              <input type="checkbox" id="show-phys" checked> Physical
+              <input type="checkbox" id="show-phys" checked /> Physical
             </label>
             <label>
-              <input type="checkbox" id="show-spec" checked> Special
+              <input type="checkbox" id="show-spec" checked /> Special
             </label>
           </div>
           <h3>Damage to KO</h3>
           <table id="attack-table">
             <!-- Combined damage results will go here -->
           </table>
+        </div>
+        <div class="analysis-section">
+          <select id="monster-select">
+            <option value="">Select a mon</option>
+          </select>
+          <div id="analysis-results" class="analysis-results">
+            <!-- Results will be inserted here -->
+          </div>
         </div>
       </div>
     </div>

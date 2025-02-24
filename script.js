@@ -73,12 +73,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         columns.forEach((column) => {
           const td = document.createElement("td");
+          
+          // Always add data attributes regardless of editability
+          td.dataset.row = rowIndex;
+          td.dataset.column = column.name;
 
           if (column.editable) {
             td.contentEditable = true;
             td.className = "editable";
-            td.dataset.row = rowIndex;
-            td.dataset.column = column.name;
 
             if (column.type === "number") {
               td.textContent = row[column.name] || 0;
@@ -113,6 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       updateStatsHeatmap();
+      updateMonsterSelect();
     }
 
     function updateTableHeaders() {
@@ -290,6 +293,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
+      updateMonsterSelect();
       renderCombinedDamageTable();
     }
 
@@ -740,6 +744,109 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     }
+
+    function updateMonsterSelect() {
+      const select = document.getElementById("monster-select");
+      select.innerHTML = '<option value="">Select a mon</option>';
+      
+      data.forEach((monster, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = monster.Name || "Unknown";
+        select.appendChild(option);
+      });
+    }
+
+    function calculateMonsterAnalysis(monsterIndex) {
+      const defender = data[monsterIndex];
+      const results = {
+        physical: [],
+        special: []
+      };
+      
+      // Calculate all damage values
+      data.forEach(attacker => {
+        const physDamage = defender.HP / (attacker.Attack / defender.Defense);
+        const specDamage = defender.HP / (attacker.SpecialAttack / defender.SpecialDefense);
+        
+        results.physical.push({
+          damage: physDamage,
+          attacker: attacker.Name
+        });
+        results.special.push({
+          damage: specDamage,
+          attacker: attacker.Name
+        });
+      });
+
+      // Sort arrays for finding min and median
+      results.physical.sort((a, b) => a.damage - b.damage);
+      results.special.sort((a, b) => a.damage - b.damage);
+
+      // Calculate statistics
+      const stats = {
+        lowestOverall: {
+          damage: Math.min(results.physical[0].damage, results.special[0].damage),
+          attacker: results.physical[0].damage < results.special[0].damage ? 
+                    results.physical[0].attacker : results.special[0].attacker,
+          category: results.physical[0].damage < results.special[0].damage ? 
+                    'Physical' : 'Special'
+        },
+        physical: {
+          min: results.physical[0],
+          avg: results.physical.reduce((sum, val) => sum + val.damage, 0) / results.physical.length,
+          median: results.physical[Math.floor(results.physical.length / 2)].damage
+        },
+        special: {
+          min: results.special[0],
+          avg: results.special.reduce((sum, val) => sum + val.damage, 0) / results.special.length,
+          median: results.special[Math.floor(results.special.length / 2)].damage
+        }
+      };
+
+      displayAnalysisResults(stats, defender.Name);
+    }
+
+    function displayAnalysisResults(stats, monsterName) {
+      const resultsDiv = document.getElementById("analysis-results");
+      const monsterNameLower = monsterName.toLowerCase();
+      
+      resultsDiv.innerHTML = `
+        <div class="analysis-header">
+          <img src="imgs/${monsterNameLower}_mini.gif" alt="${monsterName}" 
+               onerror="this.style.display='none'">
+          <h3>Analysis for ${monsterName}</h3>
+        </div>
+        <div class="analysis-grid">
+          <div class="analysis-item">
+            <h4>Lowest Damage to KO</h4>
+            <p>${stats.lowestOverall.damage.toFixed(1)} (${stats.lowestOverall.category} from ${stats.lowestOverall.attacker})</p>
+          </div>
+          
+          <div class="analysis-item">
+            <h4>Physical Damage Analysis</h4>
+            <p>Minimum: ${stats.physical.min.damage.toFixed(1)} (from ${stats.physical.min.attacker})</p>
+            <p>Average: ${stats.physical.avg.toFixed(1)}</p>
+            <p>Median: ${stats.physical.median.toFixed(1)}</p>
+          </div>
+          
+          <div class="analysis-item">
+            <h4>Special Damage Analysis</h4>
+            <p>Minimum: ${stats.special.min.damage.toFixed(1)} (from ${stats.special.min.attacker})</p>
+            <p>Average: ${stats.special.avg.toFixed(1)}</p>
+            <p>Median: ${stats.special.median.toFixed(1)}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    document.getElementById("monster-select").addEventListener("change", (e) => {
+      if (e.target.value !== "") {
+        calculateMonsterAnalysis(parseInt(e.target.value));
+      } else {
+        document.getElementById("analysis-results").innerHTML = "";
+      }
+    });
 
     // Add new export button to HTML
     const exportJsBtn = document.createElement("button");
