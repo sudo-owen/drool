@@ -237,3 +237,43 @@ tr:nth-child(even) {
   height: 32px;
   image-rendering: pixelated;
 }
+
+#moves-table select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+#moves-table select:focus {
+  outline: none;
+}
+
+#moves-table select option {
+  padding: 4px;
+}
+
+#moves-table td {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#data-table select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+#data-table select:focus {
+  outline: none;
+}
+
+#data-table select option {
+  padding: 4px;
+}
+
+#data-table td {
+  transition: background-color 0.3s, color 0.3s;
+}

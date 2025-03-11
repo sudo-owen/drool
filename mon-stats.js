@@ -1,5 +1,5 @@
 import { defaultMonsterData } from "./default-data.js";
-// import { BaseDirectory, writeTextFile } from "@tauri-apps/plugin-fs";
+import { typeData } from "./type-data.js";
 import { getFS } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -86,7 +86,56 @@ document.addEventListener("DOMContentLoaded", function () {
           td.dataset.row = rowIndex;
           td.dataset.column = column.name;
 
-          if (column.editable) {
+          if (column.name === "Type1" || column.name === "Type2") {
+            // Create type dropdown
+            const select = document.createElement("select");
+            select.style.width = "100%";
+            select.style.padding = "4px";
+            select.style.backgroundColor = "transparent";
+            select.style.border = "none";
+            select.style.cursor = "pointer";
+            select.style.color = "inherit";
+
+            // Add empty option
+            const emptyOption = document.createElement("option");
+            emptyOption.value = "";
+            emptyOption.textContent = "Select type...";
+            select.appendChild(emptyOption);
+
+            // Add type options
+            Object.entries(typeData).forEach(([type, info]) => {
+              const option = document.createElement("option");
+              option.value = type;
+              option.textContent = `${info.emoji} ${type}`;
+              option.style.backgroundColor = info.bgColor;
+              option.style.color = info.textColor;
+              if (type === row[column.name]) {
+                option.selected = true;
+                td.style.backgroundColor = info.bgColor;
+                td.style.color = info.textColor;
+                select.style.backgroundColor = info.bgColor;
+                select.style.color = info.textColor;
+              }
+              select.appendChild(option);
+            });
+
+            // Handle change event
+            select.addEventListener("change", (e) => {
+              const selectedType = e.target.value;
+              const typeInfo = typeData[selectedType];
+              
+              // Update cell styling
+              td.style.backgroundColor = selectedType ? typeInfo.bgColor : "";
+              td.style.color = selectedType ? typeInfo.textColor : "";
+              select.style.backgroundColor = selectedType ? typeInfo.bgColor : "transparent";
+              select.style.color = selectedType ? typeInfo.textColor : "inherit";
+              
+              // Update data
+              data[rowIndex][column.name] = selectedType;
+            });
+
+            td.appendChild(select);
+          } else if (column.editable) {
             td.contentEditable = true;
             td.className = "editable";
 
@@ -108,8 +157,8 @@ document.addEventListener("DOMContentLoaded", function () {
         // Add action buttons
         const actionsTd = document.createElement("td");
         const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.style.backgroundColor = "#f44336";
+        deleteBtn.textContent = "❌";
+        deleteBtn.style.backgroundColor = "#111";
         deleteBtn.addEventListener("click", () => {
           deleteRow(rowIndex);
           calculateDamage();
@@ -172,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       const actionsHeader = document.createElement("th");
-      actionsHeader.textContent = "Actions";
+      actionsHeader.textContent = "";
       headerRow.appendChild(actionsHeader);
     }
 
