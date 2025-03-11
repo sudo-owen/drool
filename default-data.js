@@ -1,4 +1,4 @@
-const defaultMonsterData = {
+export const defaultMonsterData = {
   columns: [
   {
     "name": "Name",
