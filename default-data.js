@@ -54,27 +54,27 @@ const defaultMonsterData = {
   data: [
   {
     "Name": "Gorillax",
-    "HP": 457,
-    "Attack": 302,
+    "HP": 407,
+    "Attack": 300,
     "Defense": 175,
     "SpecialAttack": 112,
     "SpecialDefense": 171,
     "Speed": 129,
     "Type1": "Earth",
     "Type2": "NA",
-    "BST": 1346
+    "BST": 1294
   },
   {
     "Name": "Pengym",
     "HP": 381,
-    "Attack": 212,
-    "Defense": 181,
-    "SpecialAttack": 273,
+    "Attack": 202,
+    "Defense": 191,
+    "SpecialAttack": 243,
     "SpecialDefense": 176,
     "Speed": 149,
     "Type1": "Ice",
     "Type2": "NA",
-    "BST": 1372
+    "BST": 1342
   },
   {
     "Name": "Inutia",
@@ -83,10 +83,10 @@ const defaultMonsterData = {
     "Defense": 202,
     "SpecialAttack": 175,
     "SpecialDefense": 214,
-    "Speed": 259,
+    "Speed": 239,
     "Type1": "Wild",
     "Type2": "NA",
-    "BST": 1381
+    "BST": 1361
   },
   {
     "Name": "Sofabbi",

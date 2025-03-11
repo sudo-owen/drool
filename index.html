@@ -1,81 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>drool</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="default-data.js"></script>
-    <script src="script.js"></script>
+    <title>Vite + TS</title>
   </head>
   <body>
-    <div class="container">
-      <h1>mons</h1>
-
-      <div>we do a little calculating</div>
-
-      <div class="controls">
-        <button id="import-btn">Import CSV</button>
-        <input type="file" id="file-input" class="file-input" accept=".csv" />
-        <button id="add-row-btn">Add Row</button>
-        <button id="calculate-btn">Calculate Damage</button>
-        <button id="export-btn">Export CSV</button>
-      </div>
-
-      <div class="tabs">
-        <div class="tab active" data-tab="data">Input Data</div>
-        <div class="tab" data-tab="damage">Damage Analysis</div>
-      </div>
-
-      <div id="data" class="tab-content active">
-        <div class="table-container">
-          <table id="data-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>HP</th>
-                <th>Attack</th>
-                <th>Defense</th>
-                <th>Special Attack</th>
-                <th>Special Defense</th>
-                <th>Speed</th>
-                <th>Type 1</th>
-                <th>Type 2</th>
-                <th>BST</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Data rows will be inserted here -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div id="damage" class="tab-content">
-        <div class="results-container">
-          <div class="damage-controls">
-            <label>
-              <input type="checkbox" id="show-phys" checked /> Physical
-            </label>
-            <label>
-              <input type="checkbox" id="show-spec" checked /> Special
-            </label>
-          </div>
-          <h3>Damage to KO</h3>
-          <table id="attack-table">
-            <!-- Combined damage results will go here -->
-          </table>
-        </div>
-        <div class="analysis-section">
-          <select id="monster-select">
-            <option value="">Select a mon</option>
-          </select>
-          <div id="analysis-results" class="analysis-results">
-            <!-- Results will be inserted here -->
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
