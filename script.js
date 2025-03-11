@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const addRowBtn = document.getElementById("add-row-btn");
   const calculateBtn = document.getElementById("calculate-btn");
   const exportBtn = document.getElementById("export-btn");
+  const exportJsBtn = document.getElementById("export-js-btn");
   const tabs = document.querySelectorAll(".tab");
   const tabContents = document.querySelectorAll(".tab-content");
   const showPhysCheckbox = document.getElementById("show-phys");
@@ -32,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
   addRowBtn.addEventListener("click", addRow);
   calculateBtn.addEventListener("click", calculateDamage);
   exportBtn.addEventListener("click", exportToCsv);
+  exportJsBtn.addEventListener("click", exportToJs);
   showPhysCheckbox.addEventListener("change", updateDamageTableVisibility);
   showSpecCheckbox.addEventListener("change", updateDamageTableVisibility);
 
@@ -876,11 +878,4 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("analysis-results").innerHTML = "";
     }
   });
-
-  // Add new export button to HTML
-  const exportJsBtn = document.createElement("button");
-  exportJsBtn.id = "export-js-btn";
-  exportJsBtn.textContent = "Export as JS";
-  exportJsBtn.addEventListener("click", exportToJs);
-  document.querySelector(".controls").appendChild(exportJsBtn);
 });
