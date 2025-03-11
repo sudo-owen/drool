@@ -1,4 +1,5 @@
 import { defaultMonsterData } from "./default-data.js";
+import { BaseDirectory, writeTextFile } from "@tauri-apps/plugin-fs";
 
 document.addEventListener("DOMContentLoaded", function () {
   // Elements
@@ -107,9 +108,8 @@ document.addEventListener("DOMContentLoaded", function () {
       deleteBtn.textContent = "Delete";
       deleteBtn.style.backgroundColor = "#f44336";
       deleteBtn.addEventListener("click", () => {
-        if (confirm("Are you sure you want to delete this row?")) {
-          deleteRow(rowIndex);
-        }
+        deleteRow(rowIndex);
+        calculateDamage();
       });
 
       actionsTd.appendChild(deleteBtn);
@@ -567,40 +567,42 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function exportToCsv() {
-    if (data.length === 0) {
-      return;
-    }
-
     const headers = columns.map((col) => col.name).join(",");
     const rows = data.map((row) => {
       return columns
         .map((col) => {
           let value = row[col.name] !== undefined ? row[col.name] : "";
-
-          // Handle special characters
           if (
             typeof value === "string" &&
             (value.includes(",") || value.includes('"') || value.includes("\n"))
           ) {
             value = `"${value.replace(/"/g, '""')}"`;
           }
-
           return value;
         })
         .join(",");
     });
 
     const csvContent = [headers, ...rows].join("\n");
+
     try {
+      await writeTextFile("export.csv", csvContent, {
+        dir: BaseDirectory.Runtime,
+      });
     } catch (error) {
-      console.error("Failed to save CSV file:", error);
+      // Web fallback
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "export.csv";
+      a.click();
+      window.URL.revokeObjectURL(url);
     }
   }
 
   async function exportToJs() {
-    if (data.length === 0) {
-      return;
-    }
+    if (data.length === 0) return;
 
     const jsContent = `const defaultMonsterData = {
   columns: ${JSON.stringify(columns, null, 2)},
@@ -608,8 +610,18 @@ document.addEventListener("DOMContentLoaded", function () {
 };`;
 
     try {
+      await writeTextFile("default-data.js", jsContent, {
+        dir: BaseDirectory.Runtime,
+      });
     } catch (error) {
-      console.error("Failed to save JS file:", error);
+      // Web fallback
+      const blob = new Blob([jsContent], { type: "application/javascript" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "default-data.js";
+      a.click();
+      window.URL.revokeObjectURL(url);
     }
   }
 
