@@ -28,7 +28,7 @@ export const typeData = {
       name: 'Water'
     },
     'Fire': {
-      bgColor: '#FF4500',
+      bgColor: '#d2400a',
       textColor: '#FFFFFF',
       abbreviation: 'FIR',
       emoji: '🔥',
@@ -66,7 +66,7 @@ export const typeData = {
       bgColor: '#8A2BE2',
       textColor: '#FFFFFF',
       abbreviation: 'MYT',
-      emoji: '📜',
+      emoji: '🧿',
       name: 'Mythic'
     },
     'Air': {
@@ -101,7 +101,7 @@ export const typeData = {
       bgColor: '#4B0082',
       textColor: '#FFFFFF',
       abbreviation: 'CMC',
-      emoji: '🔮',
+      emoji: '🌠',
       name: 'Cosmic'
     }
 };

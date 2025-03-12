@@ -435,7 +435,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       const csvContent = [headers, ...rows].join("\n");
       try {
-        await fs.writeTextFile("moves-export.csv", csvContent, {
+        await fs.writeTextFile("moves.csv", csvContent, {
           dir: fs.BaseDirectory.Runtime,
         });
       } catch (error) {
