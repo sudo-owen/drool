@@ -277,3 +277,71 @@ tr:nth-child(even) {
 #data-table td {
   transition: background-color 0.3s, color 0.3s;
 }
+
+.main-btn {
+  background-color: #365d72;
+}
+
+.main-btn:hover {
+  background-color: #40738c;
+}
+#save-indicator,
+#moves-save-indicator {
+  transition: all 0.3s ease;
+  font-size: 16px;
+  vertical-align: middle;
+  user-select: none;
+}
+
+/* Add these rules to your existing CSS */
+#moves-table th,
+#moves-table td {
+  min-width: 100px; /* Default minimum width for all columns */
+}
+
+/* Specific column widths */
+#moves-table th:nth-child(1), 
+#moves-table td:nth-child(1) { /* Name column */
+  min-width: 150px;
+}
+
+#moves-table th:nth-child(2), 
+#moves-table td:nth-child(2) { /* Mon column */
+  min-width: 150px;
+}
+
+#moves-table th:nth-child(3), 
+#moves-table td:nth-child(3) { /* Power column */
+  min-width: 80px;
+}
+
+#moves-table th:nth-child(4), 
+#moves-table td:nth-child(4) { /* Stamina column */
+  min-width: 100px;
+}
+
+#moves-table th:nth-child(5), 
+#moves-table td:nth-child(5) { /* Accuracy column */
+  min-width: 80px;
+}
+
+#moves-table th:nth-child(6), 
+#moves-table td:nth-child(6) { /* Type column */
+  min-width: 120px;
+}
+
+#moves-table th:nth-child(7), 
+#moves-table td:nth-child(7) { /* Class column */
+  min-width: 100px;
+}
+
+#moves-table th:nth-child(8), 
+#moves-table td:nth-child(8) { /* Description column */
+  min-width: 300px;
+}
+
+/* Make sure the table container handles overflow properly */
+.table-container {
+  overflow-x: auto;
+  max-width: 100%;
+}

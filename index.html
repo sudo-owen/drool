@@ -15,20 +15,20 @@
       <div>we do a little calculating</div>
 
       <div class="tabs">
-        <div class="tab active" data-tab="data">Input Data</div>
+        <div class="tab" data-tab="data">Input Data</div>
         <div class="tab" data-tab="damage">Damage Analysis</div>
-        <div class="tab" data-tab="moves">Moves</div>
+        <div class="tab active" data-tab="moves">Moves</div>
       </div>
 
-      <div id="data" class="tab-content active">
+      <div id="data" class="tab-content">
 
         <div class="controls">
+          <button id="add-row-btn">Add Row</button>
           <button id="import-btn">Import CSV</button>
           <input type="file" id="file-input" class="file-input" accept=".csv" />
-          <button id="add-row-btn">Add Row</button>
           <button id="calculate-btn">Calculate Damage</button>
           <button id="export-btn">Export CSV</button>
-          <button id="export-js-btn">Export as JS</button>
+          <button id="export-js-btn"  class="main-btn">Export as JS</button>
         </div>
 
         <div class="table-container">
@@ -80,13 +80,13 @@
         </div>
       </div>
 
-      <div id="moves" class="tab-content">
+      <div id="moves" class="tab-content active">
         <div class="controls">
           <button id="add-move-btn">Add Move</button>
           <button id="import-moves-btn">Import Moves CSV</button>
           <input type="file" id="moves-file-input" class="file-input" accept=".csv" />
           <button id="export-moves-btn">Export Moves CSV</button>
-          <button id="export-moves-js-btn">Export Moves JS</button>
+          <button id="export-moves-js-btn"  class="main-btn">Export Moves JS</button>
         </div>
         <div class="table-container">
           <table id="moves-table">
@@ -95,8 +95,8 @@
                 <th>Name</th>
                 <th>Mon</th>
                 <th>Power</th>
+                <th>⚡ Stamina</th>
                 <th>Accuracy</th>
-                <th>Stamina</th>
                 <th>Type</th>
                 <th>Class</th>
                 <th>Description</th>

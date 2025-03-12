@@ -15,6 +15,52 @@ document.addEventListener("DOMContentLoaded", function () {
     const exportMovesJsBtn = document.getElementById("export-moves-js-btn");
     const addMoveBtn = document.getElementById("add-move-btn");
 
+    // Add event listener for keyboard shortcuts
+    document.addEventListener("keydown", function(event) {
+      // Check for Ctrl+S (or Cmd+S on Mac)
+      if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+        event.preventDefault(); // Prevent browser's save dialog
+        
+        // Check which tab is active
+        const activeTab = document.querySelector(".tab.active");
+        if (activeTab && activeTab.dataset.tab === "moves") {
+          exportToJs(); // Save moves data
+        }
+      }
+    });
+
+    // Add save indicator
+    const saveIndicator = document.createElement("span");
+    saveIndicator.id = "moves-save-indicator";
+    saveIndicator.textContent = "●";
+    saveIndicator.style.color = "#4CAF50";
+    saveIndicator.style.marginLeft = "8px";
+    saveIndicator.style.opacity = "0";
+    saveIndicator.title = "All changes saved";
+    
+    // Add the indicator next to export buttons
+    exportMovesBtn.parentElement.appendChild(saveIndicator);
+    
+    let hasUnsavedChanges = false;
+
+    function markUnsavedChanges() {
+      hasUnsavedChanges = true;
+      saveIndicator.style.opacity = "1";
+      saveIndicator.style.color = "#ff9800";
+      saveIndicator.title = "Unsaved changes";
+    }
+
+    function markChangesSaved() {
+      hasUnsavedChanges = false;
+      saveIndicator.style.opacity = "1";
+      saveIndicator.style.color = "#4CAF50";
+      saveIndicator.title = "All changes saved";
+      // Fade out after 2 seconds
+      setTimeout(() => {
+        saveIndicator.style.opacity = "0";
+      }, 2000);
+    }
+
     let columns = monsterMovesData.columns;
     let data = [...monsterMovesData.data];
 
@@ -71,6 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Handle change event
             select.addEventListener("change", (e) => {
               data[rowIndex][column.name] = e.target.value;
+              markUnsavedChanges();
             });
 
             // Add monster icon next to the select
@@ -143,6 +190,63 @@ document.addEventListener("DOMContentLoaded", function () {
               
               // Update data
               data[rowIndex][column.name] = selectedType;
+              markUnsavedChanges();
+            });
+
+            td.appendChild(select);
+          } else if (column.name === "Class") {
+            // Create class dropdown
+            const select = document.createElement("select");
+            select.style.width = "100%";
+            select.style.padding = "4px";
+            select.style.backgroundColor = "transparent";
+            select.style.border = "none";
+            select.style.cursor = "pointer";
+            select.style.color = "inherit";
+
+            // Add empty option
+            const emptyOption = document.createElement("option");
+            emptyOption.value = "";
+            emptyOption.textContent = "Select class...";
+            select.appendChild(emptyOption);
+
+            // Add class options with emojis
+            const classOptions = [
+              { value: "Physical", emoji: "👊", bgColor: "#222", textColor: "#eee" },
+              { value: "Special", emoji: "✨", bgColor: "#222", textColor: "#eee" },
+              { value: "Status", emoji: "🌀", bgColor: "#222", textColor: "#eee" }
+            ];
+
+            classOptions.forEach(option => {
+              const optElement = document.createElement("option");
+              optElement.value = option.value;
+              optElement.textContent = `${option.emoji} ${option.value}`;
+              optElement.style.backgroundColor = option.bgColor;
+              optElement.style.color = option.textColor;
+              
+              if (option.value === row[column.name]) {
+                optElement.selected = true;
+                td.style.backgroundColor = option.bgColor;
+                td.style.color = option.textColor;
+                select.style.backgroundColor = option.bgColor;
+                select.style.color = option.textColor;
+              }
+              
+              select.appendChild(optElement);
+            });
+
+            // Handle change event
+            select.addEventListener("change", (e) => {
+              const selectedClass = e.target.value;
+              const classInfo = classOptions.find(opt => opt.value === selectedClass);
+              
+              // Update cell styling
+              td.style.backgroundColor = selectedClass ? classInfo.bgColor : "";
+              td.style.color = selectedClass ? classInfo.textColor : "";
+              
+              // Update data
+              data[rowIndex][column.name] = selectedClass;
+              markUnsavedChanges();
             });
 
             td.appendChild(select);
@@ -190,11 +294,13 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         data[rowIndex][column] = value;
       }
+      markUnsavedChanges();
     }
 
     function deleteRow(rowIndex) {
       data.splice(rowIndex, 1);
       renderMovesTable();
+      markUnsavedChanges();
     }
 
     function addRow() {
@@ -210,6 +316,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       data.push(newRow);
       renderMovesTable();
+      markUnsavedChanges();
     }
 
     function handleFileImport(event) {
@@ -265,9 +372,7 @@ document.addEventListener("DOMContentLoaded", function () {
           return value;
         }).join(",");
       });
-
       const csvContent = [headers, ...rows].join("\n");
-
       try {
         await fs.writeTextFile("moves-export.csv", csvContent, {
           dir: fs.BaseDirectory.Runtime,
@@ -282,13 +387,14 @@ document.addEventListener("DOMContentLoaded", function () {
         a.click();
         window.URL.revokeObjectURL(url);
       }
+      markChangesSaved();
     }
 
     async function exportToJs() {
       const jsContent = `export const monsterMovesData = {
-  columns: ${JSON.stringify(columns, null, 2)},
-  data: ${JSON.stringify(data, null, 2)}
-};`;
+        columns: ${JSON.stringify(columns, null, 2)},
+        data: ${JSON.stringify(data, null, 2)}
+      };`;
 
       try {
         await fs.writeTextFile("default-moves.js", jsContent, {
@@ -304,6 +410,7 @@ document.addEventListener("DOMContentLoaded", function () {
         a.click();
         window.URL.revokeObjectURL(url);
       }
+      markChangesSaved();
     }
   });
 });

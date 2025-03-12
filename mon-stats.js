@@ -19,6 +19,38 @@ document.addEventListener("DOMContentLoaded", function () {
     const showPhysCheckbox = document.getElementById("show-phys");
     const showSpecCheckbox = document.getElementById("show-spec");
 
+    // Add this near other element declarations
+    const saveIndicator = document.createElement("span");
+    saveIndicator.id = "save-indicator";
+    saveIndicator.textContent = "●";
+    saveIndicator.style.color = "#4CAF50";
+    saveIndicator.style.marginLeft = "8px";
+    saveIndicator.style.opacity = "0";
+    saveIndicator.title = "All changes saved";
+    
+    // Add the indicator next to export buttons
+    exportBtn.parentElement.appendChild(saveIndicator);
+    
+    let hasUnsavedChanges = false;
+
+    function markUnsavedChanges() {
+      hasUnsavedChanges = true;
+      saveIndicator.style.opacity = "1";
+      saveIndicator.style.color = "#ff9800";
+      saveIndicator.title = "Unsaved changes";
+    }
+
+    function markChangesSaved() {
+      hasUnsavedChanges = false;
+      saveIndicator.style.opacity = "1";
+      saveIndicator.style.color = "#4CAF50";
+      saveIndicator.title = "All changes saved";
+      // Fade out after 2 seconds
+      setTimeout(() => {
+        saveIndicator.style.opacity = "0";
+      }, 2000);
+    }
+
     let columns = defaultMonsterData.columns;
     let data = [...defaultMonsterData.data];
 
@@ -51,6 +83,20 @@ document.addEventListener("DOMContentLoaded", function () {
         const tabContent = document.getElementById(tab.dataset.tab);
         tabContent.classList.add("active");
       });
+    });
+
+    // Add event listener for keyboard shortcuts
+    document.addEventListener("keydown", function(event) {
+      // Check for Ctrl+S (or Cmd+S on Mac)
+      if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+        event.preventDefault(); // Prevent browser's save dialog
+        
+        // Check which tab is active
+        const activeTab = document.querySelector(".tab.active");
+        if (activeTab && activeTab.dataset.tab === "data" || activeTab.dataset.tab === "damage") {
+          exportToJs(); // Save monster data
+        }
+      }
     });
 
     // Initialize tables
@@ -243,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!isNaN(rowIndex) && columnName) {
         const column = columns.find((col) => col.name === columnName);
-
+        
         if (column.type === "number") {
           if (value === "" || isNaN(parseFloat(value))) {
             data[rowIndex][columnName] = 0;
@@ -251,17 +297,14 @@ document.addEventListener("DOMContentLoaded", function () {
           } else {
             data[rowIndex][columnName] = parseFloat(value);
           }
-
-          // Update BST after changing a numeric value
           updateBST(rowIndex);
-
-          // Recalculate damage if we have all required stats
           if (hasRequiredColumns()) {
             calculateDamage();
           }
         } else {
           data[rowIndex][columnName] = value;
         }
+        markUnsavedChanges();
       }
     }
 
