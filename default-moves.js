@@ -50,17 +50,27 @@ export const monsterMovesData = {
     "Stamina": 3,
     "Type": "Earth",
     "Class": "Physical",
-    "Description": "Gorillax attempts to pull the very ground beneath the target’s feet. If the opposing Mon is attempting to switch out, deals damage heavy damage (+1 priority). Otherwise, deals damage to Gorillax."
+    "Description": "If the opposing Mon is attempting to switch out, deals damage heavy damage (+1 priority). Otherwise, deals damage to Gorillax. (Should implement this with a global onMonSwitchOut effect that expires at end of turn, with highest priority, and then deals damage to self if it doesn’t trigger)."
   },
   {
-    "Name": "Chill Out",
-    "Mon": "Pengym",
-    "Power": "0",
+    "Name": "Warp Warp",
+    "Mon": "Inutia",
+    "Power": "20",
     "Stamina": 2,
-    "Accuracy": 90,
-    "Type": "Ice",
-    "Class": "Status",
-    "Description": "Inflicts Frostbite, which lasts 5 turns. Frostbite deals 1/16 damage every turn, and also halves special attack."
+    "Accuracy": 100,
+    "Type": "Wild",
+    "Class": "Special",
+    "Description": "Deals damage and then swaps to another mon. (-1 priority)."
+  },
+  {
+    "Name": "Chain Expansion",
+    "Mon": "Inutia",
+    "Power": "0",
+    "Stamina": 5,
+    "Accuracy": 100,
+    "Type": "Mythic",
+    "Class": "Other",
+    "Description": "Sets up long-lasting battlefield effect. Triggers on switch in for both opponent and self. Damages opponent (flat amount? % of HP?), and heals self."
   },
   {
     "Name": "Deep Freeze",
@@ -71,6 +81,46 @@ export const monsterMovesData = {
     "Type": "Ice",
     "Class": "Special",
     "Description": "If the target has Frostbite, consumes Frostbite and does double damage."
+  },
+  {
+    "Name": "Chill Out",
+    "Mon": "Pengym",
+    "Power": "0",
+    "Stamina": 2,
+    "Accuracy": 90,
+    "Type": "Ice",
+    "Class": "Other",
+    "Description": "Inflicts Frostbite, which lasts 5 turns. Frostbite deals 1/16 damage every turn, and also halves special attack."
+  },
+  {
+    "Name": "Gachachacha",
+    "Mon": "Sofabbi",
+    "Power": "?",
+    "Stamina": 3,
+    "Accuracy": 100,
+    "Type": "Nature",
+    "Class": "Physical",
+    "Description": "Uniformly random power from 0 to 200. Maybe some extra effects (instant kill for either you or opponent)."
+  },
+  {
+    "Name": "Eternal Grudge",
+    "Mon": "Ghouliath",
+    "Power": "0",
+    "Stamina": 2,
+    "Accuracy": 100,
+    "Type": "Yang",
+    "Class": "Self",
+    "Description": "KO’s self, inflicts Grudge on the opponent. Halves all stats (or something)."
+  },
+  {
+    "Name": "Wither Away",
+    "Mon": "Ghouliath",
+    "Power": "60",
+    "Stamina": 3,
+    "Accuracy": 100,
+    "Type": "Yang",
+    "Class": "Physical",
+    "Description": "Deals damage and then inflicts Spook on both parties."
   }
 ]
       };

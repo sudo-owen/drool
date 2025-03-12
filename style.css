@@ -293,12 +293,6 @@ tr:nth-child(even) {
   user-select: none;
 }
 
-/* Add these rules to your existing CSS */
-#moves-table th,
-#moves-table td {
-  min-width: 100px; /* Default minimum width for all columns */
-}
-
 /* Specific column widths */
 #moves-table th:nth-child(1), 
 #moves-table td:nth-child(1) { /* Name column */

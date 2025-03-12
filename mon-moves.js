@@ -64,6 +64,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let columns = monsterMovesData.columns;
     let data = [...monsterMovesData.data];
 
+    // Add sorting variables
+    let columnToSort = undefined;
+    let columnDirection = false; // false for ascending, true for descending
+
     // Event listeners
     importMovesBtn.addEventListener("click", () => movesFileInput.click());
     movesFileInput.addEventListener("change", handleFileImport);
@@ -74,7 +78,63 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize table
     renderMovesTable();
 
-    // Functions
+    // Add header click events for sorting
+    addHeaderSortEvents();
+
+    function addHeaderSortEvents() {
+      const headers = movesTable.querySelectorAll("thead th");      
+      headers.forEach((header, index) => {
+        // Skip the last column (actions column)
+        if (index < headers.length - 1) {
+          header.style.cursor = "pointer";
+          header.onclick = function() {
+            const columnName = columns[index].name;
+            // Toggle sort direction if clicking the same column
+            if (columnToSort === columnName) {
+              columnDirection = !columnDirection;
+            } else {
+              columnToSort = columnName;
+              columnDirection = false; // default to ascending
+            }
+            
+            // Sort the data
+            sortData(columnName, !columnDirection);
+          };
+        }
+      });
+    }
+
+    function sortData(columnName, ascending = true) {
+      console.log(`Sorting data by ${columnName}, ascending: ${ascending}`);
+      
+      data.sort((a, b) => {
+        let aValue = a[columnName];
+        let bValue = b[columnName];
+        
+        // Handle null/undefined values
+        if (aValue === undefined || aValue === null) aValue = "";
+        if (bValue === undefined || bValue === null) bValue = "";
+        
+        // Check if we're sorting a numeric column
+        const column = columns.find(col => col.name === columnName);
+        if (column && column.type === "number") {
+          // Convert to numbers for numeric comparison
+          aValue = parseFloat(aValue) || 0;
+          bValue = parseFloat(bValue) || 0;
+          return ascending ? aValue - bValue : bValue - aValue;
+        } else {
+          // String comparison for text columns
+          return ascending 
+            ? String(aValue).localeCompare(String(bValue)) 
+            : String(bValue).localeCompare(String(aValue));
+        }
+      });
+      
+      // Re-render the table with sorted data
+      renderMovesTable();
+      markUnsavedChanges();
+    }
+
     function renderMovesTable() {
       const movesTableBody = movesTable.querySelector("tbody");
       movesTableBody.innerHTML = "";
@@ -213,8 +273,9 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add class options with emojis
             const classOptions = [
               { value: "Physical", emoji: "👊", bgColor: "#222", textColor: "#eee" },
-              { value: "Special", emoji: "✨", bgColor: "#222", textColor: "#eee" },
-              { value: "Status", emoji: "🌀", bgColor: "#222", textColor: "#eee" }
+              { value: "Special", emoji: "🌀", bgColor: "#222", textColor: "#eee" },
+              { value: "Other", emoji: "✨", bgColor: "#222", textColor: "#eee" },
+              { value: "Self", emoji: "🔄", bgColor: "#222", textColor: "#eee" }
             ];
 
             classOptions.forEach(option => {
