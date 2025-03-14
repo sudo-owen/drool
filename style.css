@@ -82,6 +82,7 @@ tr:nth-child(even) {
   border: 1px solid #404040;
   padding: 15px;
   overflow-x: auto;
+  position: relative;
 }
 .tab-content.active {
   display: block;
@@ -334,8 +335,17 @@ tr:nth-child(even) {
   min-width: 300px;
 }
 
-/* Make sure the table container handles overflow properly */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #1a1a1a;
+  padding: 10px 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #404040;
+}
+
 .table-container {
-  overflow-x: auto;
-  max-width: 100%;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px); /* Adjust based on your header height */
 }

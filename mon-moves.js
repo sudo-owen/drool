@@ -1,18 +1,16 @@
-
-import { monsterMovesData } from "./default-moves.js";
 import { defaultMonsterData } from "./default-data.js";
 import { getFS } from "./utils.js";
 import { typeData } from "./type-data.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // Init filesystem APIs (if available)
-  getFS().then((fs) => {
+  getFS().then(async (fs) => {
     // Elements
     const movesTable = document.getElementById("moves-table");
     const importMovesBtn = document.getElementById("import-moves-btn");
     const movesFileInput = document.getElementById("moves-file-input");
     const exportMovesBtn = document.getElementById("export-moves-btn");
-    const exportMovesJsBtn = document.getElementById("export-moves-js-btn");
+    // const exportMovesJsBtn = document.getElementById("export-moves-js-btn");
     const addMoveBtn = document.getElementById("add-move-btn");
 
     // Add event listener for keyboard shortcuts
@@ -24,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Check which tab is active
         const activeTab = document.querySelector(".tab.active");
         if (activeTab && activeTab.dataset.tab === "moves") {
-          exportToJs(); // Save moves data
+          exportToCsv(); // Save moves data as CSV instead of JS
         }
       }
     });
@@ -61,8 +59,98 @@ document.addEventListener("DOMContentLoaded", function () {
       }, 2000);
     }
 
-    let columns = monsterMovesData.columns;
-    let data = [...monsterMovesData.data];
+    // Initialize with empty data
+    let columns = [];
+    let data = [];
+
+    // Try to load from moves.csv first using fetch
+    try {
+      const response = await fetch('moves.csv');
+      if (response.ok) {
+        const csvContent = await response.text();
+        parseCSV(csvContent);
+      } else {
+        throw new Error('Failed to fetch CSV');
+      }
+    } catch (error) {
+      console.log("Could not load moves.csv, using default data", error);
+      // If CSV loading fails, try to import from default-moves.js as fallback
+      import("./default-moves.js").then(module => {
+        columns = module.monsterMovesData.columns;
+        data = [...module.monsterMovesData.data];
+        renderMovesTable();
+      });
+    }
+
+    // Function to parse CSV content
+    function parseCSV(csvContent) {
+      const lines = csvContent.split(/\r\n|\n/);
+      
+      if (lines.length < 2) return;
+      
+      // Extract headers
+      const headers = lines[0].split(",").map(header => header.trim());
+      
+      // Set columns
+      columns = headers.map(header => ({
+        name: header,
+        type: "text",
+        editable: true
+      }));
+      
+      // Parse data
+      data = [];
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        
+        const values = parseCsvLine(line);
+        const rowData = {};
+        
+        headers.forEach((header, index) => {
+          const value = values[index]?.trim() || "";
+          rowData[header] = columns.find(col => col.name === header)?.type === "number" 
+            ? parseFloat(value) || 0 
+            : value;
+        });
+        
+        data.push(rowData);
+      }
+      
+      renderMovesTable();
+    }
+    
+    // Helper function to properly parse CSV lines with quoted values
+    function parseCsvLine(line) {
+      const result = [];
+      let current = "";
+      let inQuotes = false;
+      
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        
+        if (char === '"') {
+          if (inQuotes && i + 1 < line.length && line[i + 1] === '"') {
+            // Double quotes inside quotes - add a single quote
+            current += '"';
+            i++;
+          } else {
+            // Toggle quote mode
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          // End of field
+          result.push(current);
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+      
+      // Add the last field
+      result.push(current);
+      return result;
+    }
 
     // Add sorting variables
     let columnToSort = undefined;
@@ -72,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
     importMovesBtn.addEventListener("click", () => movesFileInput.click());
     movesFileInput.addEventListener("change", handleFileImport);
     exportMovesBtn.addEventListener("click", exportToCsv);
-    exportMovesJsBtn.addEventListener("click", exportToJs);
+    // exportMovesJsBtn.addEventListener("click", exportToJs);
     addMoveBtn.addEventListener("click", addRow);
 
     // Initialize table
@@ -138,8 +226,75 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderMovesTable() {
       const movesTableBody = movesTable.querySelector("tbody");
       movesTableBody.innerHTML = "";
+      
+      // Map to store monster name to hue mapping
+      const monsterHues = new Map();
+      const hueMinDistance = 35; // Minimum distance between hues
+      
+      // Create a function to generate distinct colors from monster names
+      const getMonsterColor = (monsterName) => {
+        if (!monsterName) return "";
+        
+        // If we've already assigned a hue to this monster, use it
+        if (monsterHues.has(monsterName)) {
+          const hue = monsterHues.get(monsterName);
+          return `hsla(${hue}, 30%, 50%, 0.5)`;
+        }
+        
+        // Generate a new hue for this monster
+        let hash = 0;
+        for (let i = 0; i < monsterName.length; i++) {
+          hash = monsterName.charCodeAt(i) * 23 + ((hash << 17) - hash);
+        }
+        hash = Math.abs(hash);
+
+        // Generate initial hue (0-360)
+        let hue = hash % 360;
+        
+        // Check if this hue is too close to existing ones
+        let attempts = 0;
+        const usedHues = Array.from(monsterHues.values());
+        
+        // Limit attempts to avoid infinite loops
+        while (attempts < 5) { 
+          // Check distance to all used hues
+          const tooClose = usedHues.some(usedHue => {
+            const distance = Math.min(
+              Math.abs(hue - usedHue),
+              360 - Math.abs(hue - usedHue)
+            );
+            return distance < hueMinDistance;
+          });
+          
+          if (!tooClose || usedHues.length === 0) {
+            // This hue is distinct enough or it's the first one
+            break;
+          }
+          
+          // Try a new hue by rehashing
+          hash = (hash * 17) + 23;
+          hue = hash % 360;
+          attempts++;
+        }
+
+        console.log(monsterName, hue);
+        
+        // Store the hue for this monster
+        monsterHues.set(monsterName, hue);
+        
+        // Return a subtle HSL color
+        return `hsla(${hue}, 30%, 50%, 0.5)`;
+      };
+      
       data.forEach((row, rowIndex) => {
         const tr = document.createElement("tr");
+        
+        // Apply subtle background color based on monster
+        const monsterName = row["Mon"];
+        if (monsterName) {
+          tr.style.backgroundColor = getMonsterColor(monsterName);
+        }
+        
         columns.forEach((column) => {
           const td = document.createElement("td");
           td.dataset.row = rowIndex;
