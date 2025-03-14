@@ -1,6 +1,6 @@
 Name,Mon,Power,Stamina,Accuracy,Type,Class,Description
 Eternal Grudge,Ghouliath,0,2,100,Yang,Self,"KO’s self, inflicts Grudge on the opponent. Halves all stats (or something)."
-Hellfire,Ghouliath,120,3,90,Fire,Special,"Deals damage, 10% chance of inflicting Burn."
+Infernal Flame,Ghouliath,120,3,90,Fire,Special,"Deals damage, 10% chance of inflicting Burn."
 Wither Away,Ghouliath,60,3,100,Yang,Special,Deals damage and then inflicts Spook on both parties.
 Osteoporosis,Ghouliath,90,2,100,Yang,Special,Deals damage.
 Rock Pull,Gorillax,?,3,100,Earth,Physical,"If the opposing Mon is attempting to switch out, deals damage heavy damage (+1 priority). Otherwise, deals damage to Gorillax."
