@@ -1,4 +1,3 @@
-import { defaultMonsterData } from "./default-data.js";
 import { getFS } from "./utils.js";
 import { typeData } from "./type-data.js";
 
@@ -62,6 +61,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initialize with empty data
     let columns = [];
     let data = [];
+    let monsFromCsv = [];
+
+    // Load mons from csv
+    await loadMonsFromCsv();
 
     // Try to load from moves.csv first using fetch
     try {
@@ -74,12 +77,33 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     } catch (error) {
       console.log("Could not load moves.csv, using default data", error);
-      // If CSV loading fails, try to import from default-moves.js as fallback
-      import("./default-moves.js").then(module => {
-        columns = module.monsterMovesData.columns;
-        data = [...module.monsterMovesData.data];
-        renderMovesTable();
-      });
+    }
+
+    async function loadMonsFromCsv() {
+      try {
+        const response = await fetch('mons.csv');
+        if (response.ok) {
+          const csvContent = await response.text();
+          const lines = csvContent.split(/\r\n|\n/);
+          
+          if (lines.length < 2) return [];
+          
+          // Skip header, parse data rows
+          monsFromCsv = [];
+          for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            
+            const values = parseCsvLine(line);
+            if (values[0]) { // If it has a name
+              monsFromCsv.push({ Name: values[0] });
+            }
+          }
+          return monsFromCsv;
+        }
+      } catch (error) {
+        console.error("Error loading mons.csv:", error);
+      }
     }
 
     // Function to parse CSV content
@@ -316,9 +340,9 @@ document.addEventListener("DOMContentLoaded", function () {
             emptyOption.textContent = "Select monster...";
             select.appendChild(emptyOption);
 
-            // Add monster options from defaultMonsterData
-            defaultMonsterData.data.forEach(monster => {
-              if (monster.Name) {  // Only add if monster has a name
+            // Use the cached monsFromCsv instead of defaultMonsterData
+            monsFromCsv.forEach(monster => {
+              if (monster.Name) {
                 const option = document.createElement("option");
                 option.value = monster.Name;
                 option.textContent = monster.Name;

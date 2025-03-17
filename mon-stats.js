@@ -1,10 +1,9 @@
-import { defaultMonsterData } from "./default-data.js";
 import { typeData } from "./type-data.js";
 import { getFS } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // Init filesystem APIs (if available)
-  getFS().then((fs) => {
+  getFS().then(async (fs) => {
     // Elements
     const dataTable = document.getElementById("data-table");
     const attackTable = document.getElementById("attack-table");
@@ -51,8 +50,21 @@ document.addEventListener("DOMContentLoaded", function () {
       }, 2000);
     }
 
-    let columns = defaultMonsterData.columns;
-    let data = [...defaultMonsterData.data];
+    let columns = [];
+    let data = [];
+
+    // Try to load from mons.csv first using fetch
+    try {
+      const response = await fetch('mons.csv');
+      if (response.ok) {
+        const csvContent = await response.text();
+        parseCSV(csvContent);
+      } else {
+        throw new Error('Failed to fetch CSV');
+      }
+    } catch (error) {
+      console.log("Could not load mons.csv, using default data", error);
+    }
 
     // Sort vars
     let columnToSort = undefined;
@@ -94,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Check which tab is active
         const activeTab = document.querySelector(".tab.active");
         if (activeTab && activeTab.dataset.tab === "data" || activeTab.dataset.tab === "damage") {
-          exportToJs(); // Save monster data
+          exportToCsv(); // Save monster data
         }
       }
     });
@@ -685,7 +697,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const csvContent = [headers, ...rows].join("\n");
 
       try {
-        await fs.writeTextFile("export.csv", csvContent, {
+        await fs.writeTextFile("mons.csv", csvContent, {
           dir: fs.BaseDirectory.Runtime,
         });
       } catch (error) {
@@ -694,7 +706,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "export.csv";
+        a.download = "mons.csv";
         a.click();
         window.URL.revokeObjectURL(url);
       }
@@ -703,7 +715,7 @@ document.addEventListener("DOMContentLoaded", function () {
     async function exportToJs() {
       if (data.length === 0) return;
 
-      const jsContent = `const defaultMonsterData = {
+      const jsContent = `export const defaultMonsterData = {
         columns: ${JSON.stringify(columns, null, 2)},
         data: ${JSON.stringify(data, null, 2)}
       };`;

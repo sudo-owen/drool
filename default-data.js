@@ -1,5 +1,5 @@
 export const defaultMonsterData = {
-  columns: [
+        columns: [
   {
     "name": "Name",
     "type": "text",
@@ -51,42 +51,30 @@ export const defaultMonsterData = {
     "editable": false
   }
 ],
-  data: [
+        data: [
   {
-    "Name": "Gorillax",
-    "HP": 407,
-    "Attack": 300,
-    "Defense": 175,
-    "SpecialAttack": 112,
-    "SpecialDefense": 171,
-    "Speed": 129,
-    "Type1": "Earth",
+    "Name": "Embursa",
+    "HP": 420,
+    "Attack": 141,
+    "Defense": 230,
+    "SpecialAttack": 202,
+    "SpecialDefense": 161,
+    "Speed": 99,
+    "Type1": "Fire",
     "Type2": "NA",
-    "BST": 1294
+    "BST": 1253
   },
   {
-    "Name": "Pengym",
-    "HP": 381,
-    "Attack": 202,
-    "Defense": 191,
-    "SpecialAttack": 243,
-    "SpecialDefense": 176,
-    "Speed": 149,
-    "Type1": "Ice",
-    "Type2": "NA",
-    "BST": 1342
-  },
-  {
-    "Name": "Inutia",
-    "HP": 351,
-    "Attack": 180,
-    "Defense": 202,
-    "SpecialAttack": 175,
-    "SpecialDefense": 214,
-    "Speed": 239,
-    "Type1": "Wild",
-    "Type2": "NA",
-    "BST": 1361
+    "Name": "Ghouliath",
+    "HP": 303,
+    "Attack": 131,
+    "Defense": 222,
+    "SpecialAttack": 131,
+    "SpecialDefense": 222,
+    "Speed": 181,
+    "Type1": "Yang",
+    "Type2": "Fire",
+    "BST": 1190
   },
   {
     "Name": "Sofabbi",
@@ -101,16 +89,52 @@ export const defaultMonsterData = {
     "BST": 1312
   },
   {
-    "Name": "Ghouliath",
-    "HP": 303,
-    "Attack": 131,
-    "Defense": 222,
-    "SpecialAttack": 131,
-    "SpecialDefense": 222,
-    "Speed": 181,
-    "Type1": "Yang",
-    "Type2": "Fire",
-    "BST": 1150
+    "Name": "Inutia",
+    "HP": 351,
+    "Attack": 180,
+    "Defense": 202,
+    "SpecialAttack": 175,
+    "SpecialDefense": 214,
+    "Speed": 259,
+    "Type1": "Wild",
+    "Type2": "NA",
+    "BST": 1381
+  },
+  {
+    "Name": "Volthare",
+    "HP": 288,
+    "Attack": 140,
+    "Defense": 184,
+    "SpecialAttack": 265,
+    "SpecialDefense": 163,
+    "Speed": 312,
+    "Type1": "Lightning",
+    "Type2": "Cyber",
+    "BST": 1352
+  },
+  {
+    "Name": "Pengym",
+    "HP": 371,
+    "Attack": 212,
+    "Defense": 181,
+    "SpecialAttack": 233,
+    "SpecialDefense": 172,
+    "Speed": 149,
+    "Type1": "Ice",
+    "Type2": "NA",
+    "BST": 1318
+  },
+  {
+    "Name": "Gorillax",
+    "HP": 437,
+    "Attack": 312,
+    "Defense": 175,
+    "SpecialAttack": 112,
+    "SpecialDefense": 176,
+    "Speed": 129,
+    "Type1": "Earth",
+    "Type2": "NA",
+    "BST": 1341
   },
   {
     "Name": "Iblivion",
@@ -126,15 +150,15 @@ export const defaultMonsterData = {
   },
   {
     "Name": "Malalien",
-    "HP": 256,
-    "Attack": 91,
-    "Defense": 122,
-    "SpecialAttack": 343,
+    "HP": 258,
+    "Attack": 121,
+    "Defense": 125,
+    "SpecialAttack": 322,
     "SpecialDefense": 151,
-    "Speed": 360,
+    "Speed": 308,
     "Type1": "Cyber",
     "Type2": "NA",
-    "BST": 1323
+    "BST": 1285
   }
 ]
-};
+      };
