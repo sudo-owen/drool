@@ -1,6 +1,6 @@
 Name,Mon,Power,Stamina,Accuracy,Type,Class,Description
 Eternal Grudge,Ghouliath,0,2,100,Yang,Self,"KO’s self, inflicts Grudge on the opponent. Halves all stats (or something)."
-Infernal Flame,Ghouliath,120,3,90,Fire,Special,"Deals damage, 10% chance of inflicting Burn."
+Infernal Flame,Ghouliath,120,3,85,Fire,Special,"Deals damage, 10% chance of inflicting Burn."
 Wither Away,Ghouliath,60,3,100,Yang,Special,Deals damage and then inflicts Spook on both parties.
 Osteoporosis,Ghouliath,90,2,100,Yang,Special,Deals damage.
 Rock Pull,Gorillax,?,3,100,Earth,Physical,"If the opposing Mon is attempting to switch out, deals damage heavy damage (+1 priority). Otherwise, deals damage to Gorillax."
@@ -19,11 +19,11 @@ Triple Think,Malalien,0,2,100,Mind,Self,Boosts SpATK by 75%.
 Federal Investigation,Malalien,100,2,100,Cyber,Special,Deals damage.
 Negative Thoughts,Malalien,80,3,100,Mind,Special,"Deals damage, 10% chance to cause Spook."
 Infinite Love,Malalien,90,2,100,Cosmic,Special,"Deals damage, 10% chance to cause Sleep."
-Chill Out,Pengym,0,2,90,Ice,Other,"Inflicts Frostbite, which lasts 5 turns. Frostbite deals 1/16 damage every turn, and also halves special attack."
+Chill Out,Pengym,0,2,90,Ice,Other,"Inflicts Frostbite, which lasts 5 turns. Frostbite deals 1/16 damage every turn, and also halves SpATK."
 Deadlift,Pengym,0,2,100,Metal,Self,Increases ATK and DEF by 50%.
 Deep Freeze,Pengym,75,3,100,Ice,Physical,"If the target has Frostbite, consumes Frostbite and does double damage."
 Pistol Squat,Pengym,80,2,100,Metal,Physical,Deals damage.
 Gachachacha,Sofabbi,?,3,100,Cyber,Physical,"Uniformly random power from 0 to 200. 5% chance to auto-KO self, 10% chance to auto-KO opponent."
 Guest Feature,Sofabbi,80,2,100,Cyber,Physical,Attack Type is set to be the first Type of another selected party member.
 Unexpected Carrot,Sofabbi,90,3,100,Nature,Physical,Deals damage.
-Snack Break,Sofabbi,0,0,100,Nature,Self,"Consumes all stamina, heals based on stamina consumed."
+Snack Break,Sofabbi,0,1,100,Nature,Self,"Heal for 1/2 of health. Effectiveness reduces by half each time, until a min of 1/16."
