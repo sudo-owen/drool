@@ -6,10 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
   getFS().then(async (fs) => {
     // Elements
     const movesTable = document.getElementById("moves-table");
-    const importMovesBtn = document.getElementById("import-moves-btn");
     const movesFileInput = document.getElementById("moves-file-input");
     const exportMovesBtn = document.getElementById("export-moves-btn");
-    // const exportMovesJsBtn = document.getElementById("export-moves-js-btn");
     const addMoveBtn = document.getElementById("add-move-btn");
 
     // Add event listener for keyboard shortcuts
@@ -181,10 +179,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let columnDirection = false; // false for ascending, true for descending
 
     // Event listeners
-    importMovesBtn.addEventListener("click", () => movesFileInput.click());
     movesFileInput.addEventListener("change", handleFileImport);
     exportMovesBtn.addEventListener("click", exportToCsv);
-    // exportMovesJsBtn.addEventListener("click", exportToJs);
     addMoveBtn.addEventListener("click", addRow);
 
     // Initialize table
