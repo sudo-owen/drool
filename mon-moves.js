@@ -216,9 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    function sortData(columnName, ascending = true) {
-      console.log(`Sorting data by ${columnName}, ascending: ${ascending}`);
-      
+    function sortData(columnName, ascending = true) {      
       data.sort((a, b) => {
         let aValue = a[columnName];
         let bValue = b[columnName];
@@ -300,8 +298,6 @@ document.addEventListener("DOMContentLoaded", function () {
           hue = hash % 360;
           attempts++;
         }
-
-        console.log(monsterName, hue);
         
         // Store the hue for this monster
         monsterHues.set(monsterName, hue);

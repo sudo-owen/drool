@@ -349,3 +349,17 @@ tr:nth-child(even) {
   overflow-y: auto;
   max-height: calc(100vh - 200px); /* Adjust based on your header height */
 }
+
+.mon-nav-holder {
+  display: flex;
+  gap: 1rem;
+}
+
+#mon-container-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}

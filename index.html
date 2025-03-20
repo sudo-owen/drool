@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css" />
     <script type="module" src="mon-stats.js"></script>
     <script type="module" src="mon-moves.js"></script>
+    <script type="module" src="mon-full.js"></script>
   </head>
   <body>
     <div class="container">
@@ -15,9 +16,10 @@
       <div>we do a little calculating</div>
 
       <div class="tabs">
-        <div class="tab" data-tab="data">Mons</div>
+        <div class="tab" data-tab="data">Stats</div>
         <div class="tab" data-tab="damage">Damage Analysis</div>
         <div class="tab active" data-tab="moves">Moves</div>
+        <div class="tab" data-tab="mons">Guide</div>
       </div>
 
       <div id="data" class="tab-content">
@@ -107,6 +109,21 @@
               <!-- Move rows will be inserted here -->
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <div id="mons" class="tab-content">
+        <div class="mon-nav-holder">
+          <div>
+            <button id="prev-mon-btn">Prev Mon</button>
+          </div>
+          <div>
+            <button id="next-mon-btn">Next Mon</button>
+          </div>
+        </div>
+        <div id="mon-container">
+          <div id="mon-container-name"></div>
+          <div id="mon-container-imgs"></div>
         </div>
       </div>
     </div>
