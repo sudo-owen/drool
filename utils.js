@@ -18,51 +18,88 @@ export async function getFS() {
   }
 }
 
-export async function loadMonsFromCsv() {
+// Function to load full monster data from CSV
+export async function loadFullMonsFromCsv() {
   try {
-    const response = await fetch('mons.csv');
+    const response = await fetch("mons.csv");
     if (response.ok) {
       const csvContent = await response.text();
       const lines = csvContent.split(/\r\n|\n/);
-      
+
       if (lines.length < 2) return [];
-      
-      // Skip header, parse data rows
-      let monsFromCsv = [];
+
+      // Extract headers
+      const headers = lines[0].split(",").map((header) => header.trim());
+
+      // Parse data rows
+      let monsData = [];
       for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
-        
+
         const values = parseCsvLine(line);
-        if (values[0]) { // If it has a name
-          monsFromCsv.push({ Name: values[0] });
+        if (values[0]) {
+          // If it has a name
+          const monData = {};
+          headers.forEach((header, index) => {
+            // Convert numeric values to numbers
+            if (
+              [
+                "HP",
+                "Attack",
+                "Defense",
+                "SpecialAttack",
+                "SpecialDefense",
+                "Speed",
+                "BST",
+              ].includes(header)
+            ) {
+              monData[header] = parseInt(values[index]) || 0;
+            } else {
+              monData[header] = values[index] || "";
+            }
+          });
+          monsData.push(monData);
         }
       }
-      return monsFromCsv;
+      return monsData;
     }
   } catch (error) {
     console.error("Error loading mons.csv:", error);
   }
+  return [];
 }
 
 export async function loadMovesFromCsv() {
   try {
-    const response = await fetch('moves.csv');
+    const response = await fetch("moves.csv");
     if (response.ok) {
       const csvContent = await response.text();
       const lines = csvContent.split(/\r\n|\n/);
-      
+
       if (lines.length < 2) return [];
-      
-      // Skip header, parse data rows
+
+      // Extract headers
+      const headers = lines[0].split(",").map((header) => header.trim());
+
+      // Parse data rows
       let movesFromCsv = [];
       for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
-        
         const values = parseCsvLine(line);
-        if (values[0]) { // If it has a name
-          movesFromCsv.push({ Name: values[0] });
+        if (values[0]) {
+          // If it has a name
+          const moveData = {};
+          headers.forEach((header, index) => {
+            // Convert numeric values to numbers
+            if (["Power", "Stamina", "Accuracy"].includes(header)) {
+              moveData[header] = values[index] === "?" ? values[index] : parseInt(values[index]) || 0;
+            } else {
+              moveData[header] = values[index] || "";
+            }
+          });
+          movesFromCsv.push(moveData);
         }
       }
       return movesFromCsv;
@@ -70,16 +107,17 @@ export async function loadMovesFromCsv() {
   } catch (error) {
     console.error("Error loading moves.csv:", error);
   }
+  return [];
 }
 
 function parseCsvLine(line) {
   const result = [];
   let current = "";
   let inQuotes = false;
-  
+
   for (let i = 0; i < line.length; i++) {
     const char = line[i];
-    
+
     if (char === '"') {
       if (inQuotes && i + 1 < line.length && line[i + 1] === '"') {
         // Double quotes inside quotes - add a single quote
@@ -89,7 +127,7 @@ function parseCsvLine(line) {
         // Toggle quote mode
         inQuotes = !inQuotes;
       }
-    } else if (char === ',' && !inQuotes) {
+    } else if (char === "," && !inQuotes) {
       // End of field
       result.push(current);
       current = "";
@@ -97,7 +135,7 @@ function parseCsvLine(line) {
       current += char;
     }
   }
-  
+
   // Add the last field
   result.push(current);
   return result;
