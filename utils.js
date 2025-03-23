@@ -110,6 +110,39 @@ export async function loadMovesFromCsv() {
   return [];
 }
 
+export async function loadAbilitiesFromCsv() {
+  try {
+    const response = await fetch("abilities.csv");
+    if (response.ok) {
+      const csvContent = await response.text();
+      const lines = csvContent.split(/\r\n|\n/);
+
+      if (lines.length < 2) return [];
+
+      // Extract headers
+      const headers = lines[0].split(",").map((header) => header.trim());
+      const abilitiesFromCsv = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const values = parseCsvLine(line);
+        if (values[0]) {
+          const abilityData = {};
+          headers.forEach((header, index) => {
+            abilityData[header] = values[index] || "";
+          });
+          abilitiesFromCsv.push(abilityData);
+        }
+      }
+      return abilitiesFromCsv;
+    }
+  } catch (error) {
+    console.error("Error loading abilities.csv:", error);
+  }
+  return [];
+} 
+
 function parseCsvLine(line) {
   const result = [];
   let current = "";

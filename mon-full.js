@@ -1,12 +1,12 @@
 
-import { getFS, loadFullMonsFromCsv, loadMovesFromCsv } from "./utils.js";
+import { loadFullMonsFromCsv, loadMovesFromCsv, loadAbilitiesFromCsv } from "./utils.js";
 import { typeData } from "./type-data.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
     // Load mon data from CSV
     const monsFromCsv = await loadFullMonsFromCsv();
-    // Load moves data using the utility function
     const movesData = await loadMovesFromCsv();
+    const abilitiesData = await loadAbilitiesFromCsv();
 
     // Calculate max values for each stat
     const maxStats = {
@@ -140,6 +140,24 @@ document.addEventListener("DOMContentLoaded", async function () {
                     </div>
                 </div>
             `;
+
+            // Filter abilities for this monster
+            const monAbilities = abilitiesData ? abilitiesData.filter(ability => ability.Mon === mon.Name) : [];
+
+            // Create abilities section
+            let abilitiesHTML = '';
+            if (monAbilities && monAbilities.length > 0) {
+                abilitiesHTML = `
+                    <div class="mon-abilities-section">
+                        ${monAbilities.map(ability => `
+                            <div class="ability-card">
+                                <div class="ability-name">${ability.Name || 'Unknown'}</div>
+                                <div class="ability-effect">${ability.Effect || 'No effect'}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
             
             // Filter moves for this monster
             const monMoves = movesData ? movesData.filter(move => move.Mon === mon.Name) : [];
@@ -204,7 +222,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 `;
             }
             
-            imgsElement.innerHTML = monImagesHTML + statsHTML + movesHTML;
+            imgsElement.innerHTML = monImagesHTML + statsHTML + abilitiesHTML + movesHTML;
             
             // Add elements to containers
             nameContainer.appendChild(nameElement);

@@ -520,3 +520,37 @@ tr:nth-child(even) {
   font-size: 0.9rem;
 }
 
+.mon-abilities-section {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-top: 1px solid #404040;
+  padding-top: 1rem;
+}
+
+.ability-card {
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #3a3a3a;
+}
+
+.ability-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.ability-effect {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+  border-top: 1px solid #3a3a3a;
+  padding-top: 0.5rem;
+  flex-grow: 1;
+  overflow-wrap: break-word;
+}
+

@@ -1,10 +1,10 @@
 Name,Mon,Effect
-Rise From The Grave,Ghouliath,Once per game, after being KO'ed, Ghouliath revives after 3 turns.
-Split The Pot,Embursa,
-Actus Reus,Malalien,If Malalien KO's an opposing mon, they gain an Indictment. Upon KO, if they have an Indictment,Malalien deals a final blow.
-,Iblivion,
-Carrot Harvest, Sofabbi,At the end of every turn, Sofabbi has a 1/3 chance of regaining 1 stamina.
-Post-Workout,Pengym,On swap out, automatically heal from certain status conditions.
-Angery,Gorillax,Each time Gorillax takes damage, they get Angerier. At 3 stacks (Angeriest), they heal for 1/6 of max HP.
-Chronomania,Volthare,
-Intervweaving,Inutia,When Inutia swaps in, the opposing mon's ATK decreases 10%. When Inutia swaps out, the opposing mon's SpATK decreases 10%.
+Rise From The Grave,Ghouliath,"Once per game, after being KO'ed, Ghouliath revives after 3 turns."
+Split The Pot,Embursa,"When Doing Nothing, Embursa heals all other non-KO'ed mons for 1/16th of max HP."
+Actus Reus,Malalien,"If Malalien KO's an opposing mon, they gain an Indictment. Upon KO, if they have an Indictment, Malalien deals damage to its murderer."
+Intrinsic Value,Iblivion,"At the end of every turn, Iblivion resets all negative stat changes."
+Carrot Harvest,Sofabbi,"At the end of every turn, Sofabbi has a 1/3 chance of regaining 1 stamina."
+Post-Workout,Pengym,"On swap out, automatically heal from certain status conditions."
+Angery,Gorillax,"Each time Gorillax takes damage, they get Angerier. At 3 stacks (Angeriest), they heal for 1/6 of max HP."
+Overclock,Volthare,"Once per game, when Volthare swaps in, the battlefield becomes Stormy. Storm lasts for 3 turns, and boosts friendly mons' speed by 25%, and decreases their DEF and SpDEF by 25%. Under a Storm, Lightning attacks do 50% additional damage."
+Intervweaving,Inutia,"When Inutia swaps in, the opposing mon's ATK decreases 10%. When Inutia swaps out, the opposing mon's SpATK decreases 10%."
