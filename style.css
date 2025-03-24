@@ -350,13 +350,20 @@ tr:nth-child(even) {
 }
 
 .table-container {
-  overflow-y: visible; 
+  overflow-y: visible;
   max-height: none;
 }
 
 .mon-nav-holder {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
+}
+
+.keyboard-hint {
+  color: #888;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
 }
 
 #mon-container-name {

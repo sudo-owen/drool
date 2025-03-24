@@ -23,14 +23,35 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Create all monster elements but hide them initially
     createAllMonElements(monsFromCsv, maxStats, movesData);
 
-    // Bind to prev/next buttons to update index
-    document.querySelector("#prev-mon-btn").addEventListener("click", () => {
+    // Function to navigate to previous monster
+    function goToPrevMon() {
         monIndex = (monIndex - 1 + monsFromCsv.length) % monsFromCsv.length;
         showActiveMon();
-    });
-    document.querySelector("#next-mon-btn").addEventListener("click", () => {
+    }
+
+    // Function to navigate to next monster
+    function goToNextMon() {
         monIndex = (monIndex + 1 + monsFromCsv.length) % monsFromCsv.length;
         showActiveMon();
+    }
+
+    // Bind to prev/next buttons to update index
+    document.querySelector("#prev-mon-btn").addEventListener("click", goToPrevMon);
+    document.querySelector("#next-mon-btn").addEventListener("click", goToNextMon);
+
+    // Add keyboard navigation with arrow keys when Guide tab is active
+    document.addEventListener("keydown", (event) => {
+        // Only handle arrow keys when the Guide tab is active
+        const monsTabActive = document.querySelector(".tab[data-tab='mons']").classList.contains("active");
+        if (monsTabActive) {
+            if (event.key === "ArrowLeft") {
+                goToPrevMon();
+                event.preventDefault(); // Prevent scrolling
+            } else if (event.key === "ArrowRight") {
+                goToNextMon();
+                event.preventDefault(); // Prevent scrolling
+            }
+        }
     });
 
     // Show the first mon

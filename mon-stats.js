@@ -26,10 +26,10 @@ document.addEventListener("DOMContentLoaded", function () {
     saveIndicator.style.marginLeft = "8px";
     saveIndicator.style.opacity = "0";
     saveIndicator.title = "All changes saved";
-    
+
     // Add the indicator next to export buttons
     exportBtn.parentElement.appendChild(saveIndicator);
-    
+
     let hasUnsavedChanges = false;
 
     function markUnsavedChanges() {
@@ -88,21 +88,49 @@ document.addEventListener("DOMContentLoaded", function () {
     // Tab navigation
     tabs.forEach((tab) => {
       tab.addEventListener("click", () => {
-        tabs.forEach((t) => t.classList.remove("active"));
-        tabContents.forEach((c) => c.classList.remove("active"));
-
-        tab.classList.add("active");
-        const tabContent = document.getElementById(tab.dataset.tab);
-        tabContent.classList.add("active");
+        const tabId = tab.dataset.tab;
+        activateTab(tabId);
+        // Update URL hash without triggering a page reload
+        window.history.pushState(null, null, `#${tabId}`);
       });
     });
+
+    // Function to activate a specific tab
+    function activateTab(tabId) {
+      // Remove active class from all tabs and contents
+      tabs.forEach((t) => t.classList.remove("active"));
+      tabContents.forEach((c) => c.classList.remove("active"));
+
+      // Add active class to selected tab and content
+      const selectedTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
+      const selectedContent = document.getElementById(tabId);
+
+      if (selectedTab && selectedContent) {
+        selectedTab.classList.add("active");
+        selectedContent.classList.add("active");
+      }
+    }
+
+    // Check URL hash on page load
+    function checkUrlHash() {
+      const hash = window.location.hash.substring(1); // Remove the # symbol
+      if (hash && document.getElementById(hash)) {
+        activateTab(hash);
+      }
+    }
+
+    // Listen for hash changes (browser back/forward buttons)
+    window.addEventListener("hashchange", checkUrlHash);
+
+    // Check hash when page loads
+    checkUrlHash();
 
     // Add event listener for keyboard shortcuts
     document.addEventListener("keydown", function(event) {
       // Check for Ctrl+S (or Cmd+S on Mac)
       if ((event.ctrlKey || event.metaKey) && event.key === 's') {
         event.preventDefault(); // Prevent browser's save dialog
-        
+
         // Check which tab is active
         const activeTab = document.querySelector(".tab.active");
         if (activeTab && activeTab.dataset.tab === "data" || activeTab.dataset.tab === "damage") {
@@ -181,13 +209,13 @@ document.addEventListener("DOMContentLoaded", function () {
             select.addEventListener("change", (e) => {
               const selectedType = e.target.value;
               const typeInfo = typeData[selectedType];
-              
+
               // Update cell styling
               td.style.backgroundColor = selectedType ? typeInfo.bgColor : "";
               td.style.color = selectedType ? typeInfo.textColor : "";
               select.style.backgroundColor = selectedType ? typeInfo.bgColor : "transparent";
               select.style.color = selectedType ? typeInfo.textColor : "inherit";
-              
+
               // Update data
               data[rowIndex][column.name] = selectedType;
             });
@@ -301,7 +329,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!isNaN(rowIndex) && columnName) {
         const column = columns.find((col) => col.name === columnName);
-        
+
         if (column.type === "number") {
           if (value === "" || isNaN(parseFloat(value))) {
             data[rowIndex][columnName] = 0;
@@ -967,7 +995,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       resultsDiv.innerHTML = `
         <div class="analysis-header">
-          <img src="imgs/${monsterNameLower}_mini.gif" alt="${monsterName}" 
+          <img src="imgs/${monsterNameLower}_mini.gif" alt="${monsterName}"
                onerror="this.style.display='none'">
           <h3>Analysis for ${monsterName}</h3>
         </div>
@@ -978,7 +1006,7 @@ document.addEventListener("DOMContentLoaded", function () {
         stats.lowestOverall.category
       } from ${stats.lowestOverall.attacker})</p>
           </div>
-          
+
           <div class="analysis-item">
             <h4>Physical Damage Analysis</h4>
             <p>Minimum: ${stats.physical.min.damage.toFixed(1)} (from ${
@@ -987,7 +1015,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <p>Average: ${stats.physical.avg.toFixed(1)}</p>
             <p>Median: ${stats.physical.median.toFixed(1)}</p>
           </div>
-          
+
           <div class="analysis-item">
             <h4>Special Damage Analysis</h4>
             <p>Minimum: ${stats.special.min.damage.toFixed(1)} (from ${
