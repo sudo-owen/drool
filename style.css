@@ -295,42 +295,42 @@ tr:nth-child(even) {
 }
 
 /* Specific column widths */
-#moves-table th:nth-child(1), 
+#moves-table th:nth-child(1),
 #moves-table td:nth-child(1) { /* Name column */
   min-width: 150px;
 }
 
-#moves-table th:nth-child(2), 
+#moves-table th:nth-child(2),
 #moves-table td:nth-child(2) { /* Mon column */
   min-width: 150px;
 }
 
-#moves-table th:nth-child(3), 
+#moves-table th:nth-child(3),
 #moves-table td:nth-child(3) { /* Power column */
   min-width: 80px;
 }
 
-#moves-table th:nth-child(4), 
+#moves-table th:nth-child(4),
 #moves-table td:nth-child(4) { /* Stamina column */
   min-width: 100px;
 }
 
-#moves-table th:nth-child(5), 
+#moves-table th:nth-child(5),
 #moves-table td:nth-child(5) { /* Accuracy column */
   min-width: 80px;
 }
 
-#moves-table th:nth-child(6), 
+#moves-table th:nth-child(6),
 #moves-table td:nth-child(6) { /* Type column */
   min-width: 120px;
 }
 
-#moves-table th:nth-child(7), 
+#moves-table th:nth-child(7),
 #moves-table td:nth-child(7) { /* Class column */
   min-width: 100px;
 }
 
-#moves-table th:nth-child(8), 
+#moves-table th:nth-child(8),
 #moves-table td:nth-child(8) { /* Description column */
   min-width: 300px;
 }
@@ -345,10 +345,13 @@ tr:nth-child(even) {
   border-bottom: 1px solid #404040;
 }
 
+#add-move-btn {
+  margin-bottom: 1rem;
+}
+
 .table-container {
-  /* Remove these properties that create the scrollbar */
-  overflow-y: visible; /* Changed from 'auto' */
-  max-height: none; /* Changed from 'calc(100vh - 200px)' */
+  overflow-y: visible; 
+  max-height: none;
 }
 
 .mon-nav-holder {
@@ -369,8 +372,9 @@ tr:nth-child(even) {
 }
 
 .stats-grid {
-  max-width: 30rem;
+  max-width: 20rem;
   font-size: 1rem;
+  margin-top: 1rem;
 }
 
 .hp-bar {
@@ -525,6 +529,35 @@ tr:nth-child(even) {
   margin-bottom: 1.5rem;
   border-top: 1px solid #404040;
   padding-top: 1rem;
+}
+
+.mon-container-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+/* On desktop, use two columns */
+@media (min-width: 768px) {
+  .mon-container-columns {
+    flex-direction: row;
+  }
+
+  .mon-column {
+    flex: 1;
+  }
+
+  #mon-container-stats {
+    max-width: 50%;
+  }
+
+  /* Remove border above abilities on desktop */
+  #mon-container-abilities-moves .mon-abilities-section {
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+  }
 }
 
 .ability-card {

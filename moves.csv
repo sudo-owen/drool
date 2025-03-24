@@ -2,7 +2,7 @@ Name,Mon,Power,Stamina,Accuracy,Type,Class,Description
 Eternal Grudge,Ghouliath,0,2,100,Yang,Self,"KO’s self, inflicts Grudge on the opponent. Halves all stats (or something)."
 Infernal Flame,Ghouliath,120,3,85,Fire,Special,"Deals damage, 10% chance of inflicting Burn."
 Wither Away,Ghouliath,60,3,100,Yang,Special,Deals damage and then inflicts Fatigue on both parties.
-Osteoporosis,Ghouliath,90,2,100,Yang,Special,Deals damage.
+Osteoporosis,Ghouliath,90,2,100,Yang,Physical,Deals damage.
 Rock Pull,Gorillax,?,3,100,Earth,Physical,"If the opposing Mon is attempting to switch out, deals damage heavy damage (+1 priority). Otherwise, deals damage to Gorillax."
 Pound Ground,Gorillax,100,2,100,Earth,Physical,Deals damage.
 Blow,Gorillax,80,2,100,Air,Physical,Deals damage.
@@ -12,10 +12,10 @@ Loop,Iblivion,0,1,100,Cosmic,Self,Restores all Stamina to full.
 Stormbright,Iblivion,40,2,100,Lightning,Special,"Deals damage, +1 priority."
 Bright Smash,Iblivion,70,2,100,Yin,Physical,"Deals damage, if Baselight is at least 2, heal for 50% of damage dealt."
 Chain Expansion,Inutia,0,4,100,Mythic,Other,"Sets up long-lasting battlefield effect. Triggers on switch in for both opponent and self. Damages opponent (flat amount? % of HP?), and heals self. (Just flat # of turns)."
-Warp Warp,Inutia,30,2,100,Mythic,Special,Deals damage and then swaps to another mon. (-1 priority).
-Big Bite,Inutia,70,2,100,Wild,Physical,Deals damage.
-Liquidity Drop,Inutia,90,3,100,Water,Special,Deals damage.
-Triple Think,Malalien,0,2,100,Mind,Self,Boosts SpATK by 75%.
+Initialize,Inutia,0,1,100,Mythic,Self,"Boosts ATK/SpATK by 50%. Can only be used once each time Inutia is sent out. When Inutia switches out, half of the bonus is transferred to the next incoming mon."
+Big Bite,Inutia,80,2,100,Wild,Physical,Deals damage.
+Liquid Shrine,Inutia,90,2,100,Water,Special,Deals damage.
+Triple Think,Malalien,0,2,100,Mind,Self,Boosts SpATK by 100%.
 Federal Investigation,Malalien,100,2,100,Cyber,Special,Deals damage.
 Negative Thoughts,Malalien,80,3,100,Mind,Special,"Deals damage, 10% chance to cause Fatigue."
 Infinite Love,Malalien,90,2,100,Cosmic,Special,"Deals damage, 10% chance to cause Sleep."
@@ -27,4 +27,8 @@ Gachachacha,Sofabbi,?,3,100,Cyber,Physical,"Uniformly random power from 0 to 200
 Guest Feature,Sofabbi,80,2,100,Cyber,Physical,Attack Type is set to be the first Type of another selected party member.
 Unexpected Carrot,Sofabbi,90,3,100,Nature,Physical,Deals damage.
 Snack Break,Sofabbi,0,1,100,Nature,Self,"Heal for 1/2 of health. Effectiveness reduces by half each time, until a min of 1/16."
-Electrocute,Volthare,90,2,100,Lightning,Special,"Deals damage, 10% chance to cause Shock."
+Electrocute,Volthare,90,2,100,Lightning,Special,Deals damage.
+Apport,Volthare,30,1,100,Lightning,Special,"Deals damage, then switches out."
+Tempest,Volthare,120,2,?,Lightning,Special,"If used during Storm, clears Storm and accuracy is 100%. Otherwise accuracy is 50%. Deals damage, 30% chance to cause Paralysis."
+Honey Bribe,Embursa,0,2,100,Wild,Other,Heals both self and opponent by 1/2 of max HP. (Each subsequent use cuts HP healed in half). Lowers opponent SpDEF by 50%.
+Set Ablaze,Embursa,100,2,100,Fire,Special,"Deals damage, 10% chance of Burn."

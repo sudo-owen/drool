@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     };
 
     let monIndex = 0;
-    
+
     // Create all monster elements but hide them initially
     createAllMonElements(monsFromCsv, maxStats, movesData);
 
@@ -35,46 +35,54 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Show the first mon
     showActiveMon();
-    
+
     // Create all monster elements but hide them
     function createAllMonElements(mons, maxStats, movesData) {
         const nameContainer = document.querySelector("#mon-container-name");
-        const imgsContainer = document.querySelector("#mon-container-imgs");
-        
+        const statsContainer = document.querySelector("#mon-container-stats");
+        const abilitiesMovesContainer = document.querySelector("#mon-container-abilities-moves");
+
         // Clear containers
         nameContainer.innerHTML = '';
-        imgsContainer.innerHTML = '';
-        
+        statsContainer.innerHTML = '';
+        abilitiesMovesContainer.innerHTML = '';
+
         mons.forEach((mon, idx) => {
             const monNameLower = mon.Name.toLowerCase();
-            
+
             // Create name element
             const nameElement = document.createElement('div');
             nameElement.className = 'mon-name-element';
             nameElement.dataset.index = idx;
             nameElement.style.display = 'none'; // Hide initially
             nameElement.innerHTML = `
-                <img src="imgs/${monNameLower}_mini.gif" alt="${mon.Name}" 
+                <img src="imgs/${monNameLower}_mini.gif" alt="${mon.Name}"
                      onerror="this.style.display='none'">
                 <div>${mon.Name}</div>
             `;
-            
-            // Create images and stats element
-            const imgsElement = document.createElement('div');
-            imgsElement.className = 'mon-imgs-element';
-            imgsElement.dataset.index = idx;
-            imgsElement.style.display = 'none'; // Hide initially
-            
+
+            // Create stats element
+            const statsElement = document.createElement('div');
+            statsElement.className = 'mon-stats-element';
+            statsElement.dataset.index = idx;
+            statsElement.style.display = 'none'; // Hide initially
+
+            // Create abilities and moves element
+            const abilitiesMovesElement = document.createElement('div');
+            abilitiesMovesElement.className = 'mon-abilities-moves-element';
+            abilitiesMovesElement.dataset.index = idx;
+            abilitiesMovesElement.style.display = 'none'; // Hide initially
+
             // Add front and back images
             const monImagesHTML = `
                 <div class="mon-sprites">
-                    <img src="imgs/${monNameLower}_front.gif" alt="${mon.Name} front" 
+                    <img src="imgs/${monNameLower}_front.gif" alt="${mon.Name} front"
                          onerror="this.style.display='none'" class="mon-sprite">
-                    <img src="imgs/${monNameLower}_back.gif" alt="${mon.Name} back" 
+                    <img src="imgs/${monNameLower}_back.gif" alt="${mon.Name} back"
                          onerror="this.style.display='none'" class="mon-sprite">
                 </div>
             `;
-            
+
             // Create stats grid
             const statsHTML = `
                 <div class="stats-grid">
@@ -158,10 +166,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                     </div>
                 `;
             }
-            
+
             // Filter moves for this monster
             const monMoves = movesData ? movesData.filter(move => move.Mon === mon.Name) : [];
-            
+
             // Create moves section
             let movesHTML = '';
             if (monMoves && monMoves.length > 0) {
@@ -172,11 +180,11 @@ document.addEventListener("DOMContentLoaded", async function () {
                                 const moveType = move.Type || '';
                                 const moveClass = move.Class || '';
                                 const typeInfo = typeData[moveType] || { bgColor: '#333', textColor: '#fff', emoji: '' };
-                                
+
                                 // Determine class styling and emoji based on mon-moves.js
                                 let classStyle = '';
                                 let classEmoji = '';
-                                
+
                                 if (moveClass === 'Physical') {
                                     classStyle = 'background-color: #C92112; color: white;';
                                     classEmoji = '👊'; // Physical emoji
@@ -190,7 +198,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                                     classStyle = 'background-color: #8C888C; color: white;';
                                     classEmoji = '🔄'; // Self emoji
                                 }
-                                
+
                                 return `
                                     <div class="move-card">
                                         <div class="move-header">
@@ -221,27 +229,32 @@ document.addEventListener("DOMContentLoaded", async function () {
                     </div>
                 `;
             }
-            
-            imgsElement.innerHTML = monImagesHTML + statsHTML + abilitiesHTML + movesHTML;
-            
+
+            // Set HTML content for each container
+            statsElement.innerHTML = monImagesHTML + statsHTML;
+            abilitiesMovesElement.innerHTML = abilitiesHTML + movesHTML;
+
             // Add elements to containers
             nameContainer.appendChild(nameElement);
-            imgsContainer.appendChild(imgsElement);
+            statsContainer.appendChild(statsElement);
+            abilitiesMovesContainer.appendChild(abilitiesMovesElement);
         });
     }
-    
+
     // Show only the active monster
     function showActiveMon() {
         // Hide all elements
-        document.querySelectorAll('.mon-name-element, .mon-imgs-element').forEach(el => {
+        document.querySelectorAll('.mon-name-element, .mon-stats-element, .mon-abilities-moves-element').forEach(el => {
             el.style.display = 'none';
         });
-        
+
         // Show only the active elements
         const activeNameEl = document.querySelector(`.mon-name-element[data-index="${monIndex}"]`);
-        const activeImgsEl = document.querySelector(`.mon-imgs-element[data-index="${monIndex}"]`);
-        
+        const activeStatsEl = document.querySelector(`.mon-stats-element[data-index="${monIndex}"]`);
+        const activeAbilitiesMovesEl = document.querySelector(`.mon-abilities-moves-element[data-index="${monIndex}"]`);
+
         if (activeNameEl) activeNameEl.style.display = 'flex';
-        if (activeImgsEl) activeImgsEl.style.display = 'block';
+        if (activeStatsEl) activeStatsEl.style.display = 'block';
+        if (activeAbilitiesMovesEl) activeAbilitiesMovesEl.style.display = 'block';
     }
 });

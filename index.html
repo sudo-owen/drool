@@ -84,7 +84,6 @@
 
       <div id="moves" class="tab-content active">
         <div class="controls">
-          <button id="add-move-btn">Add Move</button>
           <input type="file" id="moves-file-input" class="file-input" accept=".csv" />
           <button id="export-moves-btn" class="main-btn">Export Moves</button>
         </div>
@@ -107,6 +106,7 @@
               <!-- Move rows will be inserted here -->
             </tbody>
           </table>
+          <button id="add-move-btn">Add Move</button>
         </div>
       </div>
 
@@ -121,7 +121,10 @@
         </div>
         <div id="mon-container">
           <div id="mon-container-name"></div>
-          <div id="mon-container-imgs"></div>
+          <div class="mon-container-columns">
+            <div id="mon-container-stats" class="mon-column"></div>
+            <div id="mon-container-abilities-moves" class="mon-column"></div>
+          </div>
         </div>
       </div>
     </div>
