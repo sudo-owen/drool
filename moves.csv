@@ -21,7 +21,7 @@ Negative Thoughts,Malalien,80,3,100,Mind,Special,"Deals damage, 10% chance to ca
 Infinite Love,Malalien,90,2,100,Cosmic,Special,"Deals damage, 10% chance to cause Sleep."
 Chill Out,Pengym,0,2,90,Ice,Other,"Inflicts Frostbite, which lasts 5 turns. Frostbite deals 1/16 damage every turn, and also halves SpATK."
 Deadlift,Pengym,0,2,100,Metal,Self,Increases ATK and DEF by 50%.
-Deep Freeze,Pengym,75,3,100,Ice,Physical,"If the target has Frostbite, consumes Frostbite and does double damage."
+Deep Freeze,Pengym,90,3,100,Ice,Physical,"If the target has Frostbite, consumes Frostbite and does double damage."
 Pistol Squat,Pengym,80,2,100,Metal,Physical,Deals damage.
 Gachachacha,Sofabbi,?,3,100,Cyber,Physical,"Uniformly random power from 0 to 200. 5% chance to auto-KO self, 10% chance to auto-KO opponent."
 Guest Feature,Sofabbi,80,2,100,Cyber,Physical,Attack Type is set to be the first Type of another selected party member.
@@ -32,3 +32,4 @@ Apport,Volthare,30,1,100,Lightning,Special,"Deals damage, then switches out."
 Tempest,Volthare,120,2,?,Lightning,Special,"If used during Storm, clears Storm and accuracy is 100%. Otherwise accuracy is 50%. Deals damage, 30% chance to cause Paralysis."
 Honey Bribe,Embursa,0,2,100,Wild,Other,Heals both self and opponent by 1/2 of max HP. (Each subsequent use cuts HP healed in half). Lowers opponent SpDEF by 50%.
 Set Ablaze,Embursa,100,2,100,Fire,Special,"Deals damage, 10% chance of Burn."
+Heat Beacon,Embursa,0,3,100,Fire,Self,"+1 priority. Until end of turn, if Embursa takes damage, inflict 2 stacks of Burn on the opposing mon. Burn can stack up to 3 times (1st, 2nd, 3rd degree). Each stack of burn increases damage over time, from 1/16 to 1/8 to 1/4."
