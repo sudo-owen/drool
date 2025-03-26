@@ -34,3 +34,4 @@ Voltic Gambit,Volthare,60,0,100,"Deals damage and inflicts Zap on self".
 Honey Bribe,Embursa,0,2,100,Wild,Other,Heals both self and opponent by 1/2 of max HP. (Each subsequent use cuts HP healed in half). Lowers opponent SpDEF by 50%.
 Set Ablaze,Embursa,100,3,100,Fire,Special,"Deals damage, 30% chance of Burn."
 Heat Beacon,Embursa,0,2,100,Fire,Self,"+1 priority to next turn's move. Inflict Burn on the opposing mon. Burn can stack up to 3 times (1st, 2nd, 3rd degree). Each stack of burn increases damage over time, from 1/16 to 1/8 to 1/4."
+Q5,Embursa,150,5,100,Fire,Special,"Deals damage in 5 turns and Burns the enemy."
