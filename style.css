@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  padding: 20px;
+  padding: 10px;
   margin: 0 auto;
   background-color: #1a1a1a;
   color: #e0e0e0;
@@ -60,6 +60,27 @@ tr:nth-child(even) {
 .tabs {
   display: flex;
   margin-bottom: 10px;
+}
+
+/* Mobile tabs dropdown styling */
+.mobile-tabs-container {
+  display: none;
+  margin-bottom: 15px;
+}
+
+.mobile-tabs-select {
+  width: 100%;
+  padding: 10px;
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  border: 1px solid #404040;
+  border-radius: 4px;
+  font-size: 1rem;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
 }
 .tab {
   padding: 8px 16px;
@@ -545,7 +566,19 @@ tr:nth-child(even) {
   margin-top: 1rem;
 }
 
-/* On desktop, use two columns */
+/* Media queries for responsive design */
+@media (max-width: 767px) {
+  /* Hide desktop tabs and show mobile dropdown on small screens */
+  .desktop-tabs {
+    display: none;
+  }
+
+  .mobile-tabs-container {
+    display: block;
+  }
+}
+
+/* On desktop, use two columns and show tabs */
 @media (min-width: 768px) {
   .mon-container-columns {
     flex-direction: row;
@@ -564,6 +597,11 @@ tr:nth-child(even) {
     border-top: none;
     margin-top: 0;
     padding-top: 0;
+  }
+
+  /* Hide mobile dropdown on desktop */
+  .mobile-tabs-container {
+    display: none;
   }
 }
 

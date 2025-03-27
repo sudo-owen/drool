@@ -1,5 +1,3 @@
-import { typeData } from "./type-data.js";
-
 document.addEventListener("DOMContentLoaded", function () {
   // Elements
   const attackTable = document.getElementById("attack-table");

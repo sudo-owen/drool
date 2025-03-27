@@ -1,4 +1,3 @@
-// utils/fs.js
 export async function getFS() {
   try {
     return await import("@tauri-apps/plugin-fs");
@@ -172,4 +171,34 @@ function parseCsvLine(line) {
   // Add the last field
   result.push(current);
   return result;
+}
+
+export async function loadTypeData() {
+  try {
+    const response = await fetch('types.csv');
+    if (response.ok) {
+      const csvContent = await response.text();
+      const lines = csvContent.split(/\r\n|\n/);
+      if (lines.length < 2) return [];
+      const headers = lines[0].split(",").map(header => header.trim());
+      const typeData = {};
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const values = parseCsvLine(line);
+        if (values[0]) {
+          const type = {};
+          headers.forEach((header, index) => {
+            type[header] = values[index] || "";
+          });
+          typeData[type.Name] = type;
+        }
+      }
+      return typeData;
+    }
+  }
+  catch (error) {
+    console.error("Error loading types.csv:", error);
+  }
+  return {};
 }

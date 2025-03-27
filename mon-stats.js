@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const exportJsBtn = document.getElementById("export-js-btn");
     const tabs = document.querySelectorAll(".tab");
     const tabContents = document.querySelectorAll(".tab-content");
+    const mobileTabsSelect = document.getElementById("mobile-tabs");
 
     // Add this near other element declarations
     const saveIndicator = document.createElement("span");
@@ -113,8 +114,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Update URL hash without triggering a page reload
         window.history.pushState(null, null, `#${hashId}`);
+
+        // Update mobile dropdown to match selected tab
+        if (mobileTabsSelect) {
+          mobileTabsSelect.value = tabId;
+        }
       });
     });
+
+    // Mobile tabs dropdown navigation
+    if (mobileTabsSelect) {
+      mobileTabsSelect.addEventListener("change", () => {
+        const tabId = mobileTabsSelect.value;
+        activateTab(tabId);
+
+        // Special case for data tab - use #stats in URL
+        let hashId = tabId;
+
+        // Update URL hash without triggering a page reload
+        window.history.pushState(null, null, `#${hashId}`);
+      });
+    }
 
     // Function to activate a specific tab
     function activateTab(tabId) {
@@ -146,11 +166,19 @@ document.addEventListener("DOMContentLoaded", function () {
       // Handle special case for stats hash which should activate data tab
       if (hash === "stats") {
         activateTab("data");
+        // Update mobile dropdown to match
+        if (mobileTabsSelect) {
+          mobileTabsSelect.value = "data";
+        }
         return;
       }
 
       if (hash && document.getElementById(hash)) {
         activateTab(hash);
+        // Update mobile dropdown to match
+        if (mobileTabsSelect) {
+          mobileTabsSelect.value = hash;
+        }
       }
     }
 

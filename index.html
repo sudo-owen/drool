@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>drool</title>
+    <title>wiki</title>
     <link rel="stylesheet" href="style.css" />
     <script type="module" src="mon-stats.js"></script>
     <script type="module" src="mon-moves.js"></script>
@@ -16,11 +16,20 @@
 
       <div>we do a little calculating</div>
 
-      <div class="tabs">
+      <div class="tabs desktop-tabs">
         <div class="tab" data-tab="mons">Guide</div>
         <div class="tab" data-tab="data">Stats</div>
         <div class="tab" data-tab="moves">Moves</div>
         <div class="tab" data-tab="damage">Analysis</div>
+      </div>
+
+      <div class="mobile-tabs-container">
+        <select id="mobile-tabs" class="mobile-tabs-select">
+          <option value="mons">Guide</option>
+          <option value="data">Stats</option>
+          <option value="moves">Moves</option>
+          <option value="damage">Analysis</option>
+        </select>
       </div>
 
       <div id="stats" class="tab-content">
@@ -58,7 +67,7 @@
         </div>
       </div>
 
-      <div id="damage" class="tab-content">
+      <div id="damage" class="tab-content active">
         <div class="results-container">
           <div class="damage-controls">
             <label>
@@ -83,7 +92,7 @@
         </div>
       </div>
 
-      <div id="moves" class="tab-content active">
+      <div id="moves" class="tab-content">
         <div class="controls">
           <input type="file" id="moves-file-input" class="file-input" accept=".csv" />
           <button id="export-moves-btn" class="main-btn">Export Moves</button>
