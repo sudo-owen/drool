@@ -17,18 +17,18 @@
       <div>we do a little calculating</div>
 
       <div class="tabs desktop-tabs">
-        <div class="tab" data-tab="mons">Guide</div>
-        <div class="tab" data-tab="data">Stats</div>
+        <div class="tab active" data-tab="mons">Guide</div>
+        <div class="tab" data-tab="stats">Stats</div>
         <div class="tab" data-tab="moves">Moves</div>
-        <div class="tab" data-tab="damage">Analysis</div>
+        <div class="tab" data-tab="analysis">Analysis</div>
       </div>
 
       <div class="mobile-tabs-container">
         <select id="mobile-tabs" class="mobile-tabs-select">
           <option value="mons">Guide</option>
-          <option value="data">Stats</option>
+          <option value="stats">Stats</option>
           <option value="moves">Moves</option>
-          <option value="damage">Analysis</option>
+          <option value="analysis">Analysis</option>
         </select>
       </div>
 
@@ -38,7 +38,6 @@
           <button id="add-row-btn">Add Row</button>
           <button id="import-btn">Import CSV</button>
           <input type="file" id="file-input" class="file-input" accept=".csv" />
-          <button id="calculate-btn">Calculate Damage</button>
           <button id="export-btn">Export CSV</button>
           <button id="export-js-btn"  class="main-btn">Export as JS</button>
         </div>
@@ -67,7 +66,7 @@
         </div>
       </div>
 
-      <div id="damage" class="tab-content active">
+      <div id="analysis" class="tab-content">
         <div class="results-container">
           <div class="damage-controls">
             <label>
@@ -120,7 +119,7 @@
         </div>
       </div>
 
-      <div id="mons" class="tab-content">
+      <div id="mons" class="tab-content active">
         <div class="mon-nav-holder">
           <div>
             <button id="prev-mon-btn">← Prev Mon</button>

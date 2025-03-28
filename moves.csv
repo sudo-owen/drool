@@ -4,8 +4,8 @@ Infernal Flame,Ghouliath,120,2,85,Fire,Special,"Deals damage, 10% chance of infl
 Wither Away,Ghouliath,60,3,100,Yang,Special,Deals damage and then inflicts Fatigue on both parties.
 Osteoporosis,Ghouliath,90,2,100,Yang,Physical,Deals damage.
 Rock Pull,Gorillax,?,3,100,Earth,Physical,"If the opposing Mon is attempting to switch out, deals damage heavy damage. Otherwise, deals damage to Gorillax."
-Pound Ground,Gorillax,100,2,100,Earth,Physical,Deals damage.
-Blow,Gorillax,80,2,100,Air,Physical,Deals damage.
+Pound Ground,Gorillax,95,3,100,Earth,Physical,Deals damage.
+Blow,Gorillax,70,2,100,Air,Physical,Deals damage.
 Throw Pebble,Gorillax,40,1,100,Earth,Physical,Deals damage.
 Baselight,Iblivion,?,?,100,Yin,Special,"Power and Stamina go up each time, up to a cap of 5. Power grows: 80/100/120/140/160. Stamina grows: 1/2/3/4/5"
 Loop,Iblivion,0,1,100,Cosmic,Self,Restores all Stamina to full.
@@ -14,7 +14,7 @@ Bright Smash,Iblivion,70,2,100,Yin,Physical,"Deals damage, if Baselight is at le
 Chain Expansion,Inutia,0,4,100,Mythic,Other,Sets up long-lasting battlefield effect. Triggers on switch in for both opponent and self. Damages opponent and heals self for 1/8 of max HP. Lasts for 3-5 turns.
 Initialize,Inutia,0,1,100,Mythic,Self,"Boosts ATK/SpATK by 50%. Can only be used once each time Inutia is sent out. When Inutia switches out, half of the bonus is transferred to the next incoming mon."
 Big Bite,Inutia,85,2,100,Wild,Physical,Deals damage.
-Liquid Shrine,Inutia,90,2,100,Water,Special,Deals damage.
+Liquid Shrine,Inutia,90,2,100,Water,Special,"Deals damage, heals for 1/16 of max HP."
 Triple Think,Malalien,0,2,100,Mind,Self,Boosts SpATK by 100%.
 Federal Investigation,Malalien,100,2,100,Cyber,Special,Deals damage.
 Negative Thoughts,Malalien,80,3,100,Mind,Special,"Deals damage, 10% chance to cause Fatigue."

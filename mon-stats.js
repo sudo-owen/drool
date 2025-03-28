@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const importBtn = document.getElementById("import-btn");
     const fileInput = document.getElementById("file-input");
     const addRowBtn = document.getElementById("add-row-btn");
-    const calculateBtn = document.getElementById("calculate-btn");
     const exportBtn = document.getElementById("export-btn");
     const exportJsBtn = document.getElementById("export-js-btn");
     const tabs = document.querySelectorAll(".tab");
@@ -99,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function () {
     importBtn.addEventListener("click", () => fileInput.click());
     fileInput.addEventListener("change", handleFileImport);
     addRowBtn.addEventListener("click", addRow);
-    calculateBtn.addEventListener("click", notifyDataUpdated); // Just notify data updated
     exportBtn.addEventListener("click", exportToCsv);
     exportJsBtn.addEventListener("click", exportToJs);
 
@@ -108,10 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
       tab.addEventListener("click", () => {
         const tabId = tab.dataset.tab;
         activateTab(tabId);
-
-        // Special case for data tab - use #stats in URL
         let hashId = tabId;
-
         // Update URL hash without triggering a page reload
         window.history.pushState(null, null, `#${hashId}`);
 
@@ -147,9 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Handle special case for data tab which now has id="stats"
       let contentId = tabId;
-      if (tabId === "data") {
-        contentId = "stats";
-      }
 
       const selectedContent = document.getElementById(contentId);
 
