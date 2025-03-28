@@ -71,17 +71,15 @@
         <div class="results-container">
           <div class="damage-controls">
             <label>
-              <input type="checkbox" id="show-phys" checked /> Physical
-            </label>
-            <label>
-              <input type="checkbox" id="show-spec" checked /> Special
+              <input type="checkbox" id="transpose-table" /> Transpose (View as Defender)
             </label>
           </div>
-          <h3>Damage to KO</h3>
-          <table id="attack-table">
-            <!-- Combined damage results will go here -->
+          <h3>Greatest %HP Damage <span id="view-perspective">(Attacker View)</span></h3>
+          <table id="max-damage-table">
+            <!-- Max damage results will go here -->
           </table>
         </div>
+
         <div class="analysis-section">
           <select id="monster-select">
             <option value="">Select a mon</option>
@@ -90,6 +88,24 @@
             <!-- Results will be inserted here -->
           </div>
         </div>
+
+        <div class="results-container damage-to-ko-container" style="display: none;">
+          <div class="damage-controls">
+            <label>
+              <input type="checkbox" id="show-phys" checked /> Physical
+            </label>
+            <label>
+              <input type="checkbox" id="show-spec" checked /> Special
+            </label>
+            <button id="toggle-damage-to-ko" class="toggle-btn">Show Damage to KO Table</button>
+          </div>
+          <h3>Damage to KO</h3>
+          <table id="attack-table">
+            <!-- Combined damage results will go here -->
+          </table>
+        </div>
+
+
       </div>
 
       <div id="moves" class="tab-content">

@@ -110,6 +110,7 @@ tr:nth-child(even) {
 }
 .results-container {
   overflow-x: auto;
+  margin-bottom: 20px;
 }
 .highlight {
   background-color: #3d3c2f !important;
@@ -169,6 +170,12 @@ tr:nth-child(even) {
 
 .damage-controls {
   margin-bottom: 10px;
+}
+
+#view-perspective {
+  font-size: 0.9em;
+  color: #aaa;
+  font-style: italic;
 }
 
 .damage-controls label {
@@ -630,5 +637,77 @@ tr:nth-child(even) {
   padding-top: 0.5rem;
   flex-grow: 1;
   overflow-wrap: break-word;
+}
+
+/* Move damage table styling */
+.move-damage-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.move-damage-table th,
+.move-damage-table td {
+  padding: 6px;
+  text-align: left;
+  border: 1px solid #404040;
+}
+
+.move-damage-table th {
+  background-color: #2d2d2d;
+  font-weight: bold;
+}
+
+.move-damage-table tr:nth-child(even) {
+  background-color: #252525;
+}
+
+.move-damage-table tr:hover {
+  background-color: #333333;
+}
+
+.move-damage-section {
+  margin-top: 20px;
+  grid-column: span 3;
+}
+
+.calculation-formula {
+  display: block;
+  font-family: monospace;
+  white-space: nowrap;
+  color: #b0b0b0;
+  padding: 4px;
+  background-color: #222;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.calculation-steps {
+  display: block;
+  font-family: monospace;
+  color: #8a8a8a;
+  font-size: 0.9em;
+  padding-left: 8px;
+  border-left: 2px solid #444;
+  line-height: 1.4;
+}
+
+.toggle-btn {
+  margin-left: 15px;
+  background-color: #365d72;
+  padding: 6px 10px;
+  font-size: 0.9em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toggle-btn:hover {
+  background-color: #40738c;
+}
+
+.damage-to-ko-container {
+  margin-top: 20px;
+  border-top: 1px solid #404040;
+  padding-top: 20px;
 }
 

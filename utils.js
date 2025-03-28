@@ -186,13 +186,11 @@ export async function loadTypeData() {
         const line = lines[i].trim();
         if (!line) continue;
         const values = parseCsvLine(line);
-        if (values[0]) {
-          const type = {};
-          headers.forEach((header, index) => {
-            type[header] = values[index] || "";
-          });
-          typeData[type.Name] = type;
+        const typeValue = typeData[values[0]];
+        if (!typeValue) {
+          typeData[values[0]] = {};
         }
+        typeData[values[0]][values[1]] = values[2];
       }
       return typeData;
     }

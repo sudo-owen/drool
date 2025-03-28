@@ -319,7 +319,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       updateStatsHeatmap();
-      updateMonsterSelect();
     }
 
     function updateTableHeaders() {
