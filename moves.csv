@@ -11,9 +11,9 @@ Baselight,Iblivion,?,?,100,Yin,Special,"Power and Stamina go up each time, up to
 Loop,Iblivion,0,1,100,Cosmic,Self,Restores all Stamina to full.
 Water Punch,Iblivion,40,2,100,Water,Special,"Deals damage, +1 priority."
 Bright Smash,Iblivion,70,2,100,Yin,Physical,"Deals damage, if Baselight is at least 2, heal for 50% of damage dealt."
-Chain Expansion,Inutia,0,4,100,Mythic,Other,"Sets up long-lasting battlefield effect. Triggers on switch in for both opponent and self. Damages opponent and heals self for 1/8 of max HP. Lasts for 3-5 turns."
+Chain Expansion,Inutia,0,4,100,Mythic,Other,Sets up long-lasting battlefield effect. Triggers on switch in for both opponent and self. Damages opponent and heals self for 1/8 of max HP. Lasts for 3-5 turns.
 Initialize,Inutia,0,1,100,Mythic,Self,"Boosts ATK/SpATK by 50%. Can only be used once each time Inutia is sent out. When Inutia switches out, half of the bonus is transferred to the next incoming mon."
-Big Bite,Inutia,80,2,100,Wild,Physical,Deals damage.
+Big Bite,Inutia,85,2,100,Wild,Physical,Deals damage.
 Liquid Shrine,Inutia,90,2,100,Water,Special,Deals damage.
 Triple Think,Malalien,0,2,100,Mind,Self,Boosts SpATK by 100%.
 Federal Investigation,Malalien,100,2,100,Cyber,Special,Deals damage.
@@ -29,9 +29,9 @@ Unexpected Carrot,Sofabbi,90,3,100,Nature,Physical,Deals damage.
 Snack Break,Sofabbi,0,1,100,Nature,Self,"Heal for 1/2 of health. Effectiveness reduces by half each time, until a min of 1/16."
 Electrocute,Volthare,90,2,100,Lightning,Special,"Deals damage, 10% chance to cause Zap. A Zapped mon skips its next turn."
 Apport,Volthare,30,1,100,Lightning,Special,"Deals damage, then switches out."
-Tempest,Volthare,120,2,?,Lightning,Special,"+2 priority. If used during Storm, clears Storm and accuracy is 100%. Otherwise accuracy is 50%. Deals damage, 30% chance to cause Zap."
-Voltic Gambit,Volthare,60,0,100,Lightning,Special,"Deals damage and inflicts Zap on self".
+Tempest,Volthare,150,2,?,Lightning,Special,"+2 priority. If used during Storm, clears Storm and accuracy is 100%. Otherwise accuracy is 50%. Deals damage, 30% chance to cause Zap."
+Voltic Gambit,Volthare,60,0,100,Lightning,Special,Deals damage and inflicts Zap on self.
 Honey Bribe,Embursa,0,2,100,Wild,Other,Heals both self and opponent by 1/2 of max HP. (Each subsequent use cuts HP healed in half). Lowers opponent SpDEF by 50%.
 Set Ablaze,Embursa,100,3,100,Fire,Special,"Deals damage, 30% chance of Burn."
 Heat Beacon,Embursa,0,2,100,Fire,Self,"+1 priority to next turn's move. Inflict Burn on the opposing mon. Burn can stack up to 3 times (1st, 2nd, 3rd degree). Each stack of burn increases damage over time, from 1/16 to 1/8 to 1/4."
-Q5,Embursa,150,5,100,Fire,Special,"Deals damage in 5 turns and Burns the enemy."
+Q5,Embursa,150,5,100,Fire,Special,Deals damage in 5 turns and Burns the enemy.

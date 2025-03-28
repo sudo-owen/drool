@@ -16,6 +16,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   let maxDamageColumnToSort = undefined; // index of the column to sort by
   let maxDamageDirection = false; // false for ascending, true for descending
 
+  // Variables for move damage table sorting
+  let moveDamageColumnToSort = undefined; // column name to sort by
+  let moveDamageDirection = false; // false for ascending, true for descending
+
   // Variables for move damage calculation
   let movesData = await loadMovesFromCsv();
   let typeEffectivenessData = await loadTypeData();
@@ -168,6 +172,65 @@ document.addEventListener("DOMContentLoaded", async function () {
     return movesData.filter(move => move.Mon === monsterName);
   }
 
+  // Function to render the move damage table rows
+  function renderMoveDamageRows(moves, tableElement) {
+    const tbody = tableElement.querySelector('tbody');
+    tbody.innerHTML = ''; // Clear existing rows
+
+    // Get min/max values for color scaling
+    const allDamageValues = moves.map(move => move.percentHp);
+    const minDamage = Math.min(...allDamageValues);
+    const maxDamage = Math.max(...allDamageValues);
+
+    moves.forEach(move => {
+      const row = document.createElement('tr');
+
+      // Highlight rows with percentHp > 90%
+      if (move.percentHp > 90) {
+        row.classList.add('high-damage-row');
+      } else {
+        // Add color scaling for normal damage
+        const getColorIntensity = (value) => {
+          const normalized = (value - minDamage) / (maxDamage - minDamage);
+          return Math.floor(normalized * 40);
+        };
+        row.style.backgroundColor = `rgba(255, 99, 71, ${getColorIntensity(move.percentHp)}%)`;
+      }
+
+      // Get type color
+      const typeInfo = typeData[move.moveType] || { bgColor: '#333', textColor: '#fff', emoji: '' };
+
+      // Create calculation formula
+      const calculationHtml = `
+        <span class="calculation-formula">
+          (${move.power} Power × ${move.attackStat} ${move.attackStatName}) ÷ ${move.defenseStat} ${move.defenseStatName} × ${move.typeMultiplier}
+        </span>
+        <div class="calculation-steps">
+          = ${move.damage.toFixed(1)}
+        </div>
+      `;
+
+      row.innerHTML = `
+        <td>${move.moveName}</td>
+        <td style="background-color: ${typeInfo.bgColor}; color: ${typeInfo.textColor}">
+          ${typeInfo.emoji} ${move.moveType}
+        </td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <img src="imgs/${move.attacker.toLowerCase()}_mini.gif" alt="${move.attacker}"
+                 style="width: 32px; image-rendering: pixelated;" onerror="this.style.display='none'">
+            <span>${move.attacker}</span>
+          </div>
+        </td>
+        <td>${calculationHtml}</td>
+        <td>${move.damage.toFixed(1)}</td>
+        <td>${move.percentHp.toFixed(1)}%</td>
+      `;
+
+      tbody.appendChild(row);
+    });
+  }
+
   function displayAnalysisResults(stats, monsterName) {
     const resultsDiv = document.getElementById("analysis-results");
     const monsterNameLower = monsterName.toLowerCase();
@@ -195,55 +258,32 @@ document.addEventListener("DOMContentLoaded", async function () {
         <thead>
           <tr>
             <th>Move</th>
-            <th>Type</th>
-            <th>From</th>
+            <th class="sortable" data-sort="moveType">Type <span class="sort-indicator"></span></th>
+            <th class="sortable" data-sort="attacker">From <span class="sort-indicator"></span></th>
             <th>Calculation</th>
-            <th>Damage</th>
-            <th>% HP</th>
+            <th class="sortable" data-sort="damage">Damage <span class="sort-indicator"></span></th>
+            <th class="sortable" data-sort="percentHp">% HP <span class="sort-indicator"></span></th>
           </tr>
         </thead>
         <tbody></tbody>
       `;
 
-      // Sort moves by damage (highest first)
-      stats.moveDamage.sort((a, b) => b.damage - a.damage);
-
-      // Add rows for each move
-      stats.moveDamage.forEach(move => {
-        const row = document.createElement('tr');
-
-        // Get type color
-        const typeInfo = typeData[move.moveType] || { bgColor: '#333', textColor: '#fff', emoji: '' };
-
-        // Create calculation formula
-        const calculationHtml = `
-          <span class="calculation-formula">
-            (${move.power} Power × ${move.attackStat} ${move.attackStatName}) ÷ ${move.defenseStat} ${move.defenseStatName} × ${move.typeMultiplier}
-          </span>
-          <div class="calculation-steps">
-            = ${move.damage.toFixed(1)}
-          </div>
-        `;
-
-        row.innerHTML = `
-          <td>${move.moveName}</td>
-          <td style="background-color: ${typeInfo.bgColor}; color: ${typeInfo.textColor}">
-            ${typeInfo.emoji} ${move.moveType}
-          </td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 4px;">
-              <img src="imgs/${move.attacker.toLowerCase()}_mini.gif" alt="${move.attacker}"
-                   style="width: 32px; image-rendering: pixelated;" onerror="this.style.display='none'">
-              <span>${move.attacker}</span>
-            </div>
-          </td>
-          <td>${calculationHtml}</td>
-          <td>${move.damage.toFixed(1)}</td>
-          <td>${move.percentHp.toFixed(1)}%</td>
-        `;
-
-        moveTable.querySelector('tbody').appendChild(row);
+      // Add event listeners to sortable headers
+      moveTable.querySelectorAll('th.sortable').forEach(header => {
+        header.style.cursor = 'pointer';
+        header.addEventListener('click', () => {
+          const sortKey = header.dataset.sort;
+          sortMoveDamageTable(stats.moveDamage, sortKey, moveTable);
+        });
       });
+
+      // Sort moves by percentHp (highest first) by default
+      moveDamageColumnToSort = 'percentHp';
+      moveDamageDirection = true;
+      sortMoveDamageTable(stats.moveDamage, moveDamageColumnToSort, moveTable, true);
+
+      // Initial render of the move damage table
+      renderMoveDamageRows(stats.moveDamage, moveTable);
 
       moveDamageSection.appendChild(moveTable);
       resultsDiv.querySelector('.analysis-grid').appendChild(moveDamageSection);
@@ -315,6 +355,69 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Re-render the table with the new sorting
     renderMaxDamageTable();
+  }
+
+  // Function to sort the move damage table
+  function sortMoveDamageTable(moves, columnName, tableElement, skipDirectionToggle = false) {
+    // Toggle direction if clicking the same column
+    if (moveDamageColumnToSort === columnName && !skipDirectionToggle) {
+      moveDamageDirection = !moveDamageDirection;
+    } else if (!skipDirectionToggle) {
+      moveDamageColumnToSort = columnName;
+      moveDamageDirection = true; // Default to descending (highest first)
+    }
+
+    // Update sort indicators in the table headers
+    tableElement.querySelectorAll('th.sortable').forEach(header => {
+      const indicator = header.querySelector('.sort-indicator');
+      if (header.dataset.sort === moveDamageColumnToSort) {
+        indicator.textContent = moveDamageDirection ? ' ▼' : ' ▲';
+      } else {
+        indicator.textContent = '';
+      }
+    });
+
+    // Sort the moves array based on the selected column
+    moves.sort((a, b) => {
+      let valueA, valueB;
+
+      // Handle different column types
+      switch (columnName) {
+        case 'moveType':
+          valueA = a.moveType || '';
+          valueB = b.moveType || '';
+          return moveDamageDirection
+            ? valueB.localeCompare(valueA)
+            : valueA.localeCompare(valueB);
+
+        case 'attacker':
+          valueA = a.attacker || '';
+          valueB = b.attacker || '';
+          return moveDamageDirection
+            ? valueB.localeCompare(valueA)
+            : valueA.localeCompare(valueB);
+
+        case 'damage':
+          valueA = a.damage || 0;
+          valueB = b.damage || 0;
+          return moveDamageDirection
+            ? valueB - valueA
+            : valueA - valueB;
+
+        case 'percentHp':
+          valueA = a.percentHp || 0;
+          valueB = b.percentHp || 0;
+          return moveDamageDirection
+            ? valueB - valueA
+            : valueA - valueB;
+
+        default:
+          return 0;
+      }
+    });
+
+    // Re-render the table with the sorted data
+    renderMoveDamageRows(moves, tableElement);
   }
 
   // Function to render the max damage table
@@ -511,13 +614,17 @@ document.addEventListener("DOMContentLoaded", async function () {
             td.appendChild(badgeContainer);
             td.appendChild(sourceInfo);
 
-            // Add color scaling
-            const getColorIntensity = (value) => {
-              const normalized = (value - minDamage) / (maxDamage - minDamage);
-              return Math.floor(normalized * 40);
-            };
-
-            td.style.backgroundColor = `rgba(255, 99, 71, ${getColorIntensity(damageInfo.percentHp)}%)`;
+            // Check if damage is above 90% for special styling
+            if (damageInfo.percentHp > 90) {
+              td.classList.add('high-damage-cell');
+            } else {
+              // Add color scaling for normal damage
+              const getColorIntensity = (value) => {
+                const normalized = (value - minDamage) / (maxDamage - minDamage);
+                return Math.floor(normalized * 40);
+              };
+              td.style.backgroundColor = `rgba(255, 99, 71, ${getColorIntensity(damageInfo.percentHp)}%)`;
+            }
             tr.appendChild(td);
           } else {
             const td = document.createElement("td");
@@ -591,13 +698,17 @@ document.addEventListener("DOMContentLoaded", async function () {
           td.appendChild(badgeContainer);
           td.appendChild(sourceInfo);
 
-          // Add color scaling
-          const getColorIntensity = (value) => {
-            const normalized = (value - minDamage) / (maxDamage - minDamage);
-            return Math.floor(normalized * 40);
-          };
-
-          td.style.backgroundColor = `rgba(255, 99, 71, ${getColorIntensity(damageInfo.percentHp)}%)`;
+          // Check if damage is above 90% for special styling
+          if (damageInfo.percentHp > 90) {
+            td.classList.add('high-damage-cell');
+          } else {
+            // Add color scaling for normal damage
+            const getColorIntensity = (value) => {
+              const normalized = (value - minDamage) / (maxDamage - minDamage);
+              return Math.floor(normalized * 40);
+            };
+            td.style.backgroundColor = `rgba(255, 99, 71, ${getColorIntensity(damageInfo.percentHp)}%)`;
+          }
           tr.appendChild(td);
         });
       }

@@ -591,6 +591,8 @@ document.addEventListener("DOMContentLoaded", function () {
         a.click();
         window.URL.revokeObjectURL(url);
       }
+      markChangesSaved();
+      notifyDataUpdated();
     }
 
     async function exportToJs() {
@@ -615,6 +617,8 @@ document.addEventListener("DOMContentLoaded", function () {
         a.click();
         window.URL.revokeObjectURL(url);
       }
+      markChangesSaved();
+      notifyDataUpdated();
     }
 
     function applyCellHeatmap(cell, value, minValue, maxValue) {

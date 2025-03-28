@@ -708,3 +708,31 @@ tr:nth-child(even) {
   color: #ffffff;
 }
 
+/* High damage cell styling */
+.high-damage-cell {
+  background-color: rgba(27, 116, 172, 0.5) !important;
+}
+
+/* High damage row styling for Move Damage Analysis */
+.high-damage-row {
+  background-color: rgba(27, 116, 172, 0.3) !important;
+}
+
+.high-damage-row:hover {
+  background-color: rgba(27, 116, 172, 0.4) !important;
+}
+
+/* Sortable header styling */
+th.sortable {
+  cursor: pointer;
+}
+
+th.sortable:hover {
+  background-color: #3d3d3d;
+}
+
+.sort-indicator {
+  display: inline-block;
+  margin-left: 4px;
+}
+

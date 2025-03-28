@@ -1,10 +1,10 @@
 Name,HP,Attack,Defense,SpecialAttack,SpecialDefense,Speed,Type1,Type2,BST
-Ghouliath,303,131,222,131,222,181,Yang,Fire,1190
+Ghouliath,303,151,202,151,202,181,Yang,Fire,1190
 Embursa,420,141,230,202,161,111,Fire,NA,1265
 Malalien,258,121,125,322,151,308,Cyber,NA,1285
 Iblivion,277,188,164,240,168,256,Cosmic,NA,1293
 Sofabbi,333,180,201,120,269,205,Nature,NA,1308
 Pengym,371,212,191,233,172,149,Ice,NA,1328
 Gorillax,417,312,175,112,176,129,Earth,NA,1321
-Volthare,288,140,184,265,163,312,Lightning,Cyber,1352
+Volthare,303,120,184,255,176,311,Lightning,Cyber,1349
 Inutia,351,180,202,175,204,259,Wild,NA,1371
