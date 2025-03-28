@@ -3,21 +3,13 @@ import { typeData } from "./type-data.js";
 
 document.addEventListener("DOMContentLoaded", async function () {
   // Elements
-  const attackTable = document.getElementById("attack-table");
   const maxDamageTable = document.getElementById("max-damage-table");
-  const showPhysCheckbox = document.getElementById("show-phys");
-  const showSpecCheckbox = document.getElementById("show-spec");
   const transposeTableCheckbox = document.getElementById("transpose-table");
   const monsterSelect = document.getElementById("monster-select");
-  const toggleDamageToKoBtn = document.getElementById("toggle-damage-to-ko");
-  const damageToKoContainer = document.querySelector(".damage-to-ko-container");
 
   // Variables for damage table
   let data = [];
   let columns = [];
-  let damageColumnToSort = undefined; // 'phys' or 'spec'
-  let damageAttackerIndex = undefined; // index of the attacker column
-  let damageDirection = false; // false for ascending, true for descending
   let isTransposed = false; // for max damage table view
 
   // Variables for max damage table sorting
@@ -29,8 +21,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   let typeEffectivenessData = await loadTypeData();
 
   // Event listeners
-  showPhysCheckbox.addEventListener("change", updateDamageTableVisibility);
-  showSpecCheckbox.addEventListener("change", updateDamageTableVisibility);
   transposeTableCheckbox.addEventListener("change", function() {
     isTransposed = this.checked;
     document.getElementById("view-perspective").textContent =
@@ -45,24 +35,26 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // Toggle Damage to KO table visibility
-  toggleDamageToKoBtn.addEventListener("click", function() {
-    const isVisible = damageToKoContainer.style.display !== "none";
-    damageToKoContainer.style.display = isVisible ? "none" : "block";
-    toggleDamageToKoBtn.textContent = isVisible ? "Show Damage to KO Table" : "Hide Damage to KO Table";
-  });
-
   // Listen for data updates from mon-stats.js
   document.addEventListener("monster-data-updated", function(event) {
     data = event.detail.data;
     columns = event.detail.columns;
     updateMonsterSelect();
-    renderCombinedDamageTable();
+    renderMaxDamageTable();
+  });
+
+  // Listen for moves data updates from mon-moves.js
+  document.addEventListener("moves-data-updated", async function(event) {
+    // Update moves data
+    movesData = event.detail.data;
+    // Re-render the damage table with the updated moves
     renderMaxDamageTable();
 
-    // Make sure the Damage to KO table is hidden by default
-    damageToKoContainer.style.display = "none";
-    toggleDamageToKoBtn.textContent = "Show Damage to KO Table";
+    // If a monster is currently selected, recalculate its analysis
+    const selectedMonsterIndex = monsterSelect.value;
+    if (selectedMonsterIndex !== "") {
+      calculateMonsterAnalysis(parseInt(selectedMonsterIndex));
+    }
   });
 
   function updateMonsterSelect() {
@@ -75,307 +67,22 @@ document.addEventListener("DOMContentLoaded", async function () {
       option.textContent = monster.Name || "Unknown";
       select.appendChild(option);
     });
-  }
 
-  function renderCombinedDamageTable() {
-    attackTable.innerHTML = "";
-
-    // Create header row with "Atk ↓ / Def →" in corner
-    const headerRow = document.createElement("tr");
-    const cornerCell = document.createElement("th");
-    cornerCell.textContent = "Atk ↓ / Def →";
-    headerRow.appendChild(cornerCell);
-
-    // Create headers for each defender (columns)
-    data.forEach((defenderRow) => {
-      const th = document.createElement("th");
-      th.colSpan = "2"; // Span both physical and special cells
-
-      const headerContent = document.createElement("div");
-      headerContent.style.display = "flex";
-      headerContent.style.flexDirection = "column";
-      headerContent.style.alignItems = "center";
-      headerContent.style.gap = "4px";
-
-      const img = document.createElement("img");
-      const monsterName = (defenderRow.Name || "").toLowerCase();
-      img.src = `imgs/${monsterName}_mini.gif`;
-      img.alt = defenderRow.Name || "";
-      img.onerror = () => (img.style.display = "none");
-
-      const nameSpan = document.createElement("span");
-      nameSpan.textContent = `🛡️ ${defenderRow.Name || "Unknown"}`;
-
-      headerContent.appendChild(img);
-      headerContent.appendChild(nameSpan);
-      th.appendChild(headerContent);
-      headerRow.appendChild(th);
-    });
-
-    attackTable.appendChild(headerRow);
-
-    // Create subheader for Phys/Spec labels
-    const subheaderRow = document.createElement("tr");
-    const emptyCorner = document.createElement("th");
-    subheaderRow.appendChild(emptyCorner);
-
-    data.forEach((_, columnIndex) => {
-      const physHeader = document.createElement("th");
-      physHeader.textContent = "Phys";
-      physHeader.style.fontSize = "0.8em";
-      physHeader.style.cursor = "pointer";
-
-      const specHeader = document.createElement("th");
-      specHeader.textContent = "Spec";
-      specHeader.style.fontSize = "0.8em";
-      specHeader.style.cursor = "pointer";
-
-      // Add click handlers for sorting
-      physHeader.addEventListener("click", () => {
-        if (
-          damageColumnToSort === "phys" &&
-          damageAttackerIndex === columnIndex &&
-          damageDirection === true
-        ) {
-          damageDirection = false;
-        } else {
-          damageDirection = true;
-        }
-        damageColumnToSort = "phys";
-        damageAttackerIndex = columnIndex;
-        sortDamageTable();
-      });
-
-      specHeader.addEventListener("click", () => {
-        if (
-          damageColumnToSort === "spec" &&
-          damageAttackerIndex === columnIndex &&
-          damageDirection === true
-        ) {
-          damageDirection = false;
-        } else {
-          damageDirection = true;
-        }
-        damageColumnToSort = "spec";
-        damageAttackerIndex = columnIndex;
-        sortDamageTable();
-      });
-
-      subheaderRow.appendChild(physHeader);
-      subheaderRow.appendChild(specHeader);
-    });
-
-    attackTable.appendChild(subheaderRow);
-
-    // Get min/max values for color scaling
-    const allDamageValues = [];
-    data.forEach((attackerRow) => {
-      data.forEach((defenderRow) => {
-        const physDamage =
-          defenderRow.HP / (attackerRow.Attack / defenderRow.Defense);
-        const specDamage =
-          defenderRow.HP /
-          (attackerRow.SpecialAttack / defenderRow.SpecialDefense);
-        allDamageValues.push(physDamage, specDamage);
-      });
-    });
-
-    const minDamage = Math.min(...allDamageValues);
-    const maxDamage = Math.max(...allDamageValues);
-
-    // Create data rows (now attackers)
-    data.forEach((attackerRow) => {
-      const tr = document.createElement("tr");
-
-      // Row header with image and name
-      const rowHeader = document.createElement("th");
-      const headerContent = document.createElement("div");
-      headerContent.style.display = "flex";
-      headerContent.style.alignItems = "center";
-      headerContent.style.gap = "8px";
-
-      const img = document.createElement("img");
-      const monsterName = (attackerRow.Name || "").toLowerCase();
-      img.src = `imgs/${monsterName}_mini.gif`;
-      img.alt = attackerRow.Name || "";
-      img.onerror = () => (img.style.display = "none");
-
-      const nameSpan = document.createElement("span");
-      nameSpan.textContent = `⚔️ ${attackerRow.Name || "Unknown"}`;
-
-      headerContent.appendChild(img);
-      headerContent.appendChild(nameSpan);
-      rowHeader.appendChild(headerContent);
-      tr.appendChild(rowHeader);
-
-      // Calculate damage cells for each defender
-      data.forEach((defenderRow) => {
-        // Physical damage cell
-        const physTd = document.createElement("td");
-        const physDamage =
-          defenderRow.HP / (attackerRow.Attack / defenderRow.Defense);
-        physTd.textContent = physDamage.toFixed(1);
-
-        // Special damage cell
-        const specTd = document.createElement("td");
-        const specDamage =
-          defenderRow.HP /
-          (attackerRow.SpecialAttack / defenderRow.SpecialDefense);
-        specTd.textContent = specDamage.toFixed(1);
-
-        // Add color scaling
-        const getColorIntensity = (value) => {
-          const normalized = (value - minDamage) / (maxDamage - minDamage);
-          return Math.floor((1 - normalized) * 40);
-        };
-
-        physTd.style.backgroundColor = `rgba(255, 99, 71, ${getColorIntensity(
-          physDamage
-        )}%)`;
-        specTd.style.backgroundColor = `rgba(65, 105, 225, ${getColorIntensity(
-          specDamage
-        )}%)`;
-
-        tr.appendChild(physTd);
-        tr.appendChild(specTd);
-      });
-
-      attackTable.appendChild(tr);
-    });
-
-    // Add some styling to the table
-    attackTable.style.borderCollapse = "collapse";
-    const cells = attackTable.getElementsByTagName("td");
-    for (let cell of cells) {
-      cell.style.padding = "4px 8px";
-      cell.style.border = "1px solid #ddd";
-      cell.style.textAlign = "center";
+    // Set the first monster as the default if there are any monsters
+    if (data.length > 0) {
+      select.value = 0; // Select the first monster
+      calculateMonsterAnalysis(0); // Calculate analysis for the first monster
     }
-
-    updateDamageTableVisibility();
-  }
-
-  function updateDamageTableVisibility() {
-    const showPhys = showPhysCheckbox.checked;
-    const showSpec = showSpecCheckbox.checked;
-
-    // Update column headers
-    const headerCells = attackTable.querySelectorAll("tr:nth-child(1) th");
-    const subheaderCells = attackTable.querySelectorAll("tr:nth-child(2) th");
-
-    // Skip first cell (corner cell)
-    for (let i = 1; i < headerCells.length; i++) {
-      headerCells[i].colSpan = showPhys && showSpec ? "2" : "1";
-      if (!showPhys && !showSpec) {
-        headerCells[i].style.display = "none";
-      } else {
-        headerCells[i].style.display = "";
-      }
-    }
-
-    // Handle subheader and data cells
-    const rows = attackTable.querySelectorAll("tr");
-    rows.forEach((row, rowIndex) => {
-      if (rowIndex < 2) return; // Skip header rows
-
-      const cells = row.querySelectorAll("td");
-      cells.forEach((cell, cellIndex) => {
-        if (cellIndex % 2 === 0) {
-          // Physical damage cells
-          cell.style.display = showPhys ? "" : "none";
-        } else {
-          // Special damage cells
-          cell.style.display = showSpec ? "" : "none";
-        }
-      });
-    });
-
-    // Handle subheader cells (Phys/Spec labels)
-    for (let i = 1; i < subheaderCells.length; i++) {
-      if (i % 2 === 1) {
-        // Physical headers
-        subheaderCells[i].style.display = showPhys ? "" : "none";
-      } else {
-        // Special headers
-        subheaderCells[i].style.display = showSpec ? "" : "none";
-      }
-    }
-  }
-
-  function sortDamageTable() {
-    // Store the current table structure
-    const currentRows = Array.from(attackTable.querySelectorAll("tr")).slice(
-      2
-    ); // Skip header and subheader rows
-
-    // Create array of objects containing defender data and damage values
-    const sortableData = currentRows.map((row) => {
-      // Remove the emoji from the name to find the correct data
-      const defenderName = row
-        .querySelector("th span")
-        .textContent.replace("⚔️ ", "");
-      const defenderData = data.find((d) => d.Name === defenderName);
-      const attackerRow = data[damageAttackerIndex];
-
-      // Make sure we have valid data before calculating
-      if (!defenderData || !attackerRow)
-        return { row, physDamage: Infinity, specDamage: Infinity };
-
-      const physDamage =
-        defenderData.HP / (attackerRow.Attack / defenderData.Defense);
-      const specDamage =
-        defenderData.HP /
-        (attackerRow.SpecialAttack / defenderData.SpecialDefense);
-
-      return {
-        row,
-        physDamage,
-        specDamage,
-      };
-    });
-
-    // Sort the rows
-    sortableData.sort((a, b) => {
-      const valueA =
-        damageColumnToSort === "phys" ? a.physDamage : a.specDamage;
-      const valueB =
-        damageColumnToSort === "phys" ? b.physDamage : b.specDamage;
-
-      return damageDirection ? valueB - valueA : valueA - valueB;
-    });
-
-    // Remove existing rows (except headers)
-    currentRows.forEach((row) => row.remove());
-
-    // Append sorted rows back to the table
-    sortableData.forEach((item) => {
-      attackTable.appendChild(item.row);
-    });
   }
 
   function calculateMonsterAnalysis(monsterIndex) {
     const defender = data[monsterIndex];
     const results = {
-      physical: [],
-      special: [],
       moveDamage: []
     };
 
     // Calculate all damage values
     data.forEach((attacker) => {
-      const physDamage = defender.HP / (attacker.Attack / defender.Defense);
-      const specDamage =
-        defender.HP / (attacker.SpecialAttack / defender.SpecialDefense);
-
-      results.physical.push({
-        damage: physDamage,
-        attacker: attacker.Name,
-      });
-      results.special.push({
-        damage: specDamage,
-        attacker: attacker.Name,
-      });
-
       // Calculate damage for each of the attacker's moves against the defender
       const attackerMoves = getMovesForMonster(attacker.Name);
       if (attackerMoves.length > 0) {
@@ -391,42 +98,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
     });
 
-    // Sort arrays for finding min and median
-    results.physical.sort((a, b) => a.damage - b.damage);
-    results.special.sort((a, b) => a.damage - b.damage);
-
-    // Calculate statistics
     const stats = {
-      lowestOverall: {
-        damage: Math.min(
-          results.physical[0].damage,
-          results.special[0].damage
-        ),
-        attacker:
-          results.physical[0].damage < results.special[0].damage
-            ? results.physical[0].attacker
-            : results.special[0].attacker,
-        category:
-          results.physical[0].damage < results.special[0].damage
-            ? "Physical"
-            : "Special",
-      },
-      physical: {
-        min: results.physical[0],
-        avg:
-          results.physical.reduce((sum, val) => sum + val.damage, 0) /
-          results.physical.length,
-        median:
-          results.physical[Math.floor(results.physical.length / 2)].damage,
-      },
-      special: {
-        min: results.special[0],
-        avg:
-          results.special.reduce((sum, val) => sum + val.damage, 0) /
-          results.special.length,
-        median:
-          results.special[Math.floor(results.special.length / 2)].damage,
-      },
       moveDamage: results.moveDamage
     };
 
@@ -507,30 +179,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         <h3>Analysis for ${monsterName}</h3>
       </div>
       <div class="analysis-grid">
-        <div class="analysis-item">
-          <h4>Lowest Damage to KO</h4>
-          <p>${stats.lowestOverall.damage.toFixed(1)} (${
-      stats.lowestOverall.category
-    } from ${stats.lowestOverall.attacker})</p>
-        </div>
-
-        <div class="analysis-item">
-          <h4>Physical Damage Analysis</h4>
-          <p>Minimum: ${stats.physical.min.damage.toFixed(1)} (from ${
-      stats.physical.min.attacker
-    })</p>
-          <p>Average: ${stats.physical.avg.toFixed(1)}</p>
-          <p>Median: ${stats.physical.median.toFixed(1)}</p>
-        </div>
-
-        <div class="analysis-item">
-          <h4>Special Damage Analysis</h4>
-          <p>Minimum: ${stats.special.min.damage.toFixed(1)} (from ${
-      stats.special.min.attacker
-    })</p>
-          <p>Average: ${stats.special.avg.toFixed(1)}</p>
-          <p>Median: ${stats.special.median.toFixed(1)}</p>
-        </div>
       </div>
     `;
 
@@ -563,14 +211,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Add rows for each move
       stats.moveDamage.forEach(move => {
         const row = document.createElement('tr');
-
-        // Format effectiveness text
-        let effectivenessText = '1x (Neutral)';
-        if (move.typeMultiplier === 0) effectivenessText = 'Immune (0x)';
-        else if (move.typeMultiplier === 0.25) effectivenessText = 'Not very effective (0.25x)';
-        else if (move.typeMultiplier === 0.5) effectivenessText = 'Not very effective (0.5x)';
-        else if (move.typeMultiplier === 2) effectivenessText = 'Super effective (2x)';
-        else if (move.typeMultiplier === 4) effectivenessText = 'Super effective (4x)';
 
         // Get type color
         const typeInfo = typeData[move.moveType] || { bgColor: '#333', textColor: '#fff', emoji: '' };
@@ -623,14 +263,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // For each defender
       data.forEach((defender) => {
-        // Calculate physical and special damage
-        const physDamage = defender.HP / (attacker.Attack / defender.Defense);
-        const specDamage = defender.HP / (attacker.SpecialAttack / defender.SpecialDefense);
-
         // Calculate move damage if available
         let maxMoveDamage = 0;
         let maxMoveName = "";
         let maxMoveClass = "";
+        let maxMoveType = "";
+        let maxTypeMultiplier = 0;
         const attackerMoves = getMovesForMonster(attacker.Name);
 
         if (attackerMoves.length > 0) {
@@ -640,24 +278,22 @@ document.addEventListener("DOMContentLoaded", async function () {
               maxMoveDamage = moveDamage.percentHp;
               maxMoveName = move.Name;
               maxMoveClass = move.Class;
+              maxMoveType = move.Type;
+              maxTypeMultiplier = moveDamage.typeMultiplier;
             }
           });
         }
 
-        // Determine the greatest damage (as percentage of HP)
-        // The damage values are 'damage to KO', so we need to invert them to get %HP damage
-        const physPercentHp = (100 / physDamage) * 100;
-        const specPercentHp = (100 / specDamage) * 100;
-
-        let greatestDamage = Math.max(physPercentHp, specPercentHp, maxMoveDamage);
-        let damageSource = "";
-
-        damageSource = `${maxMoveName} (${maxMoveClass})`;
+        let greatestDamage = maxMoveDamage;
+        let damageSource = `${maxMoveName} (${maxMoveClass})`;
 
         attackerData.damages.push({
           defenderName: defender.Name,
           percentHp: greatestDamage,
-          source: damageSource
+          source: damageSource,
+          moveType: maxMoveType,
+          moveClass: maxMoveClass,
+          typeMultiplier: maxTypeMultiplier
         });
       });
 
@@ -818,12 +454,61 @@ document.addEventListener("DOMContentLoaded", async function () {
             damageValue.style.fontWeight = "bold";
             damageValue.textContent = `${damageInfo.percentHp.toFixed(1)}%`;
 
+            // Create type badge and multiplier display
+            const badgeContainer = document.createElement("div");
+            badgeContainer.className = "damage-badge-container";
+
+            // Extract move name from source for better display
+            const moveName = damageInfo.source.split(' (')[0];
+            const moveClass = damageInfo.moveClass || '';
+
+            // Create move name element with enhanced styling
+            const moveNameElement = document.createElement("div");
+            moveNameElement.className = "move-name-display";
+            moveNameElement.textContent = moveName;
+
+            // Add type badge with multiplier if we have move type info
+            if (damageInfo.moveType) {
+              const typeInfo = typeData[damageInfo.moveType] || { bgColor: '#333', textColor: '#fff', emoji: '' };
+              const typeBadge = document.createElement("span");
+              typeBadge.className = "damage-type-badge";
+              typeBadge.style.backgroundColor = typeInfo.bgColor;
+              typeBadge.style.color = typeInfo.textColor;
+
+              // Add emoji and type multiplier together
+              let badgeContent = typeInfo.emoji;
+
+              // Add multiplier right next to the type
+              if (damageInfo.typeMultiplier) {
+                const multiplierSpan = document.createElement("span");
+                multiplierSpan.className = "damage-type-multiplier";
+                multiplierSpan.textContent = `×${damageInfo.typeMultiplier}`;
+                typeBadge.appendChild(document.createTextNode(badgeContent));
+                typeBadge.appendChild(multiplierSpan);
+              } else {
+                typeBadge.textContent = badgeContent;
+              }
+
+              badgeContainer.appendChild(typeBadge);
+            }
+
+            // Create source info with class emoji paired with the text
             const sourceInfo = document.createElement("div");
             sourceInfo.style.fontSize = "0.85em";
             sourceInfo.style.color = "#aaa";
-            sourceInfo.textContent = damageInfo.source;
+
+            // Add move class with emoji
+            if (moveClass) {
+              const classEmoji = moveClass === 'Physical' ? '👊' :
+                              moveClass === 'Special' ? '🌀' : '✨';
+              sourceInfo.innerHTML = `${classEmoji} ${moveClass}`;
+            } else {
+              sourceInfo.textContent = damageInfo.source.split('(')[1]?.replace(')', '') || '';
+            }
 
             td.appendChild(damageValue);
+            td.appendChild(moveNameElement);
+            td.appendChild(badgeContainer);
             td.appendChild(sourceInfo);
 
             // Add color scaling
@@ -849,12 +534,61 @@ document.addEventListener("DOMContentLoaded", async function () {
           damageValue.style.fontWeight = "bold";
           damageValue.textContent = `${damageInfo.percentHp.toFixed(1)}%`;
 
+          // Create type badge and multiplier display
+          const badgeContainer = document.createElement("div");
+          badgeContainer.className = "damage-badge-container";
+
+          // Extract move name from source for better display
+          const moveName = damageInfo.source.split(' (')[0];
+          const moveClass = damageInfo.moveClass || '';
+
+          // Create move name element with enhanced styling
+          const moveNameElement = document.createElement("div");
+          moveNameElement.className = "move-name-display";
+          moveNameElement.textContent = moveName;
+
+          // Add type badge with multiplier if we have move type info
+          if (damageInfo.moveType) {
+            const typeInfo = typeData[damageInfo.moveType] || { bgColor: '#333', textColor: '#fff', emoji: '' };
+            const typeBadge = document.createElement("span");
+            typeBadge.className = "damage-type-badge";
+            typeBadge.style.backgroundColor = typeInfo.bgColor;
+            typeBadge.style.color = typeInfo.textColor;
+
+            // Add emoji and type multiplier together
+            let badgeContent = typeInfo.emoji;
+
+            // Add multiplier right next to the type
+            if (damageInfo.typeMultiplier) {
+              const multiplierSpan = document.createElement("span");
+              multiplierSpan.className = "damage-type-multiplier";
+              multiplierSpan.textContent = `×${damageInfo.typeMultiplier}`;
+              typeBadge.appendChild(document.createTextNode(badgeContent));
+              typeBadge.appendChild(multiplierSpan);
+            } else {
+              typeBadge.textContent = badgeContent;
+            }
+
+            badgeContainer.appendChild(typeBadge);
+          }
+
+          // Create source info with class emoji paired with the text
           const sourceInfo = document.createElement("div");
           sourceInfo.style.fontSize = "0.85em";
           sourceInfo.style.color = "#aaa";
-          sourceInfo.textContent = damageInfo.source;
+
+          // Add move class with emoji
+          if (moveClass) {
+            const classEmoji = moveClass === 'Physical' ? '👊' :
+                            moveClass === 'Special' ? '🌀' : '✨';
+            sourceInfo.innerHTML = `${classEmoji} ${moveClass}`;
+          } else {
+            sourceInfo.textContent = damageInfo.source.split('(')[1]?.replace(')', '') || '';
+          }
 
           td.appendChild(damageValue);
+          td.appendChild(moveNameElement);
+          td.appendChild(badgeContainer);
           td.appendChild(sourceInfo);
 
           // Add color scaling
@@ -888,11 +622,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     data = window.monsterData.data;
     columns = window.monsterData.columns;
     updateMonsterSelect();
-    renderCombinedDamageTable();
     renderMaxDamageTable();
-
-    // Make sure the Damage to KO table is hidden by default
-    damageToKoContainer.style.display = "none";
-    toggleDamageToKoBtn.textContent = "Show Damage to KO Table";
   }
 });

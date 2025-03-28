@@ -139,34 +139,7 @@ tr:nth-child(even) {
   image-rendering: pixelated;
 }
 
-#attack-table img {
-  width: 32px;
-  vertical-align: middle;
-  image-rendering: pixelated;
-}
 
-#attack-table th {
-  white-space: nowrap;
-  min-width: 100px;
-}
-
-/* For the attack table */
-#attack-table td {
-  width: 1%;
-  white-space: nowrap;
-  text-align: right;
-  padding: 2px 4px;
-}
-
-#attack-table th {
-  min-width: unset;
-  width: 1%;
-  white-space: nowrap;
-}
-
-#attack-table tr th:first-child {
-  min-width: 80px;
-}
 
 .damage-controls {
   margin-bottom: 10px;
@@ -692,22 +665,46 @@ tr:nth-child(even) {
   line-height: 1.4;
 }
 
-.toggle-btn {
-  margin-left: 15px;
-  background-color: #365d72;
-  padding: 6px 10px;
-  font-size: 0.9em;
+/* Max damage table styling */
+.damage-badge-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.damage-type-badge {
+  padding: 2px 4px;
   border-radius: 4px;
-  cursor: pointer;
+  font-size: 0.75em;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
 }
 
-.toggle-btn:hover {
-  background-color: #40738c;
+.damage-type-multiplier {
+  font-size: 0.85em;
+  font-weight: bold;
+  margin-left: 2px;
 }
 
-.damage-to-ko-container {
-  margin-top: 20px;
-  border-top: 1px solid #404040;
-  padding-top: 20px;
+.multiplier-super {
+  color: #4CAF50; /* Green for super effective */
+}
+
+.multiplier-not-effective {
+  color: #F44336; /* Red for not very effective */
+}
+
+.move-class-indicator {
+  font-size: 0.9em;
+}
+
+.move-name-display {
+  font-weight: bold;
+  font-size: 1.05em;
+  color: #ffffff;
 }
 

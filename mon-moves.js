@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Check for Ctrl+S (or Cmd+S on Mac)
       if ((event.ctrlKey || event.metaKey) && event.key === 's') {
         event.preventDefault(); // Prevent browser's save dialog
-        
+
         // Check which tab is active
         const activeTab = document.querySelector(".tab.active");
         if (activeTab && activeTab.dataset.tab === "moves") {
@@ -32,10 +32,10 @@ document.addEventListener("DOMContentLoaded", function () {
     saveIndicator.style.marginLeft = "8px";
     saveIndicator.style.opacity = "0";
     saveIndicator.title = "All changes saved";
-    
+
     // Add the indicator next to export buttons
     exportMovesBtn.parentElement.appendChild(saveIndicator);
-    
+
     let hasUnsavedChanges = false;
 
     function markUnsavedChanges() {
@@ -54,6 +54,19 @@ document.addEventListener("DOMContentLoaded", function () {
       setTimeout(() => {
         saveIndicator.style.opacity = "0";
       }, 2000);
+    }
+
+    // Function to notify other components when moves data changes
+    function notifyMovesDataUpdated() {
+      // Dispatch custom event
+      document.dispatchEvent(
+        new CustomEvent("moves-data-updated", {
+          detail: {
+            data: data,
+            columns: columns
+          }
+        })
+      );
     }
 
     // Initialize with empty data
@@ -83,15 +96,15 @@ document.addEventListener("DOMContentLoaded", function () {
         if (response.ok) {
           const csvContent = await response.text();
           const lines = csvContent.split(/\r\n|\n/);
-          
+
           if (lines.length < 2) return [];
-          
+
           // Skip header, parse data rows
           monsFromCsv = [];
           for (let i = 1; i < lines.length; i++) {
             const line = lines[i].trim();
             if (!line) continue;
-            
+
             const values = parseCsvLine(line);
             if (values[0]) { // If it has a name
               monsFromCsv.push({ Name: values[0] });
@@ -107,50 +120,50 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to parse CSV content
     function parseCSV(csvContent) {
       const lines = csvContent.split(/\r\n|\n/);
-      
+
       if (lines.length < 2) return;
-      
+
       // Extract headers
       const headers = lines[0].split(",").map(header => header.trim());
-      
+
       // Set columns
       columns = headers.map(header => ({
         name: header,
         type: "text",
         editable: true
       }));
-      
+
       // Parse data
       data = [];
       for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue;
-        
+
         const values = parseCsvLine(line);
         const rowData = {};
-        
+
         headers.forEach((header, index) => {
           const value = values[index]?.trim() || "";
-          rowData[header] = columns.find(col => col.name === header)?.type === "number" 
-            ? parseFloat(value) || 0 
+          rowData[header] = columns.find(col => col.name === header)?.type === "number"
+            ? parseFloat(value) || 0
             : value;
         });
-        
+
         data.push(rowData);
       }
-      
+
       renderMovesTable();
     }
-    
+
     // Helper function to properly parse CSV lines with quoted values
     function parseCsvLine(line) {
       const result = [];
       let current = "";
       let inQuotes = false;
-      
+
       for (let i = 0; i < line.length; i++) {
         const char = line[i];
-        
+
         if (char === '"') {
           if (inQuotes && i + 1 < line.length && line[i + 1] === '"') {
             // Double quotes inside quotes - add a single quote
@@ -168,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
           current += char;
         }
       }
-      
+
       // Add the last field
       result.push(current);
       return result;
@@ -190,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
     addHeaderSortEvents();
 
     function addHeaderSortEvents() {
-      const headers = movesTable.querySelectorAll("thead th");      
+      const headers = movesTable.querySelectorAll("thead th");
       headers.forEach((header, index) => {
         // Skip the last column (actions column)
         if (index < headers.length - 1) {
@@ -204,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
               columnToSort = columnName;
               columnDirection = false; // default to ascending
             }
-            
+
             // Sort the data
             sortData(columnName, !columnDirection);
           };
@@ -212,15 +225,15 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    function sortData(columnName, ascending = true) {      
+    function sortData(columnName, ascending = true) {
       data.sort((a, b) => {
         let aValue = a[columnName];
         let bValue = b[columnName];
-        
+
         // Handle null/undefined values
         if (aValue === undefined || aValue === null) aValue = "";
         if (bValue === undefined || bValue === null) bValue = "";
-        
+
         // Check if we're sorting a numeric column
         const column = columns.find(col => col.name === columnName);
         if (column && column.type === "number") {
@@ -230,12 +243,12 @@ document.addEventListener("DOMContentLoaded", function () {
           return ascending ? aValue - bValue : bValue - aValue;
         } else {
           // String comparison for text columns
-          return ascending 
-            ? String(aValue).localeCompare(String(bValue)) 
+          return ascending
+            ? String(aValue).localeCompare(String(bValue))
             : String(bValue).localeCompare(String(aValue));
         }
       });
-      
+
       // Re-render the table with sorted data
       renderMovesTable();
       markUnsavedChanges();
@@ -244,21 +257,21 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderMovesTable() {
       const movesTableBody = movesTable.querySelector("tbody");
       movesTableBody.innerHTML = "";
-      
+
       // Map to store monster name to hue mapping
       const monsterHues = new Map();
       const hueMinDistance = 35; // Minimum distance between hues
-      
+
       // Create a function to generate distinct colors from monster names
       const getMonsterColor = (monsterName) => {
         if (!monsterName) return "";
-        
+
         // If we've already assigned a hue to this monster, use it
         if (monsterHues.has(monsterName)) {
           const hue = monsterHues.get(monsterName);
           return `hsla(${hue}, 30%, 50%, 0.5)`;
         }
-        
+
         // Generate a new hue for this monster
         let hash = 0;
         for (let i = 0; i < monsterName.length; i++) {
@@ -268,13 +281,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Generate initial hue (0-360)
         let hue = hash % 360;
-        
+
         // Check if this hue is too close to existing ones
         let attempts = 0;
         const usedHues = Array.from(monsterHues.values());
-        
+
         // Limit attempts to avoid infinite loops
-        while (attempts < 5) { 
+        while (attempts < 5) {
           // Check distance to all used hues
           const tooClose = usedHues.some(usedHue => {
             const distance = Math.min(
@@ -283,34 +296,34 @@ document.addEventListener("DOMContentLoaded", function () {
             );
             return distance < hueMinDistance;
           });
-          
+
           if (!tooClose || usedHues.length === 0) {
             // This hue is distinct enough or it's the first one
             break;
           }
-          
+
           // Try a new hue by rehashing
           hash = (hash * 17) + 23;
           hue = hash % 360;
           attempts++;
         }
-        
+
         // Store the hue for this monster
         monsterHues.set(monsterName, hue);
-        
+
         // Return a subtle HSL color
         return `hsla(${hue}, 30%, 50%, 0.5)`;
       };
-      
+
       data.forEach((row, rowIndex) => {
         const tr = document.createElement("tr");
-        
+
         // Apply subtle background color based on monster
         const monsterName = row["Mon"];
         if (monsterName) {
           tr.style.backgroundColor = getMonsterColor(monsterName);
         }
-        
+
         columns.forEach((column) => {
           const td = document.createElement("td");
           td.dataset.row = rowIndex;
@@ -349,6 +362,7 @@ document.addEventListener("DOMContentLoaded", function () {
             select.addEventListener("change", (e) => {
               data[rowIndex][column.name] = e.target.value;
               markUnsavedChanges();
+              notifyMovesDataUpdated();
             });
 
             // Add monster icon next to the select
@@ -414,14 +428,15 @@ document.addEventListener("DOMContentLoaded", function () {
             select.addEventListener("change", (e) => {
               const selectedType = e.target.value;
               const typeInfo = typeData[selectedType];
-              
+
               // Update cell styling
               td.style.backgroundColor = selectedType ? typeInfo.bgColor : "";
               td.style.color = selectedType ? typeInfo.textColor : "";
-              
+
               // Update data
               data[rowIndex][column.name] = selectedType;
               markUnsavedChanges();
+              notifyMovesDataUpdated();
             });
 
             td.appendChild(select);
@@ -455,7 +470,7 @@ document.addEventListener("DOMContentLoaded", function () {
               optElement.textContent = `${option.emoji} ${option.value}`;
               optElement.style.backgroundColor = option.bgColor;
               optElement.style.color = option.textColor;
-              
+
               if (option.value === row[column.name]) {
                 optElement.selected = true;
                 td.style.backgroundColor = option.bgColor;
@@ -463,7 +478,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 select.style.backgroundColor = option.bgColor;
                 select.style.color = option.textColor;
               }
-              
+
               select.appendChild(optElement);
             });
 
@@ -471,14 +486,15 @@ document.addEventListener("DOMContentLoaded", function () {
             select.addEventListener("change", (e) => {
               const selectedClass = e.target.value;
               const classInfo = classOptions.find(opt => opt.value === selectedClass);
-              
+
               // Update cell styling
               td.style.backgroundColor = selectedClass ? classInfo.bgColor : "";
               td.style.color = selectedClass ? classInfo.textColor : "";
-              
+
               // Update data
               data[rowIndex][column.name] = selectedClass;
               markUnsavedChanges();
+              notifyMovesDataUpdated();
             });
 
             td.appendChild(select);
@@ -527,17 +543,19 @@ document.addEventListener("DOMContentLoaded", function () {
         data[rowIndex][column] = value;
       }
       markUnsavedChanges();
+      notifyMovesDataUpdated();
     }
 
     function deleteRow(rowIndex) {
       data.splice(rowIndex, 1);
       renderMovesTable();
       markUnsavedChanges();
+      notifyMovesDataUpdated();
     }
 
     function addRow() {
       const newRow = {};
-      
+
       columns.forEach((column) => {
         if (column.type === "number") {
           newRow[column.name] = 0;
@@ -549,6 +567,7 @@ document.addEventListener("DOMContentLoaded", function () {
       data.push(newRow);
       renderMovesTable();
       markUnsavedChanges();
+      notifyMovesDataUpdated();
     }
 
     function handleFileImport(event) {
@@ -559,7 +578,7 @@ document.addEventListener("DOMContentLoaded", function () {
       reader.onload = function(e) {
         const text = e.target.result;
         const lines = text.split("\n");
-        
+
         if (lines.length < 2) return;
 
         // Extract headers
@@ -589,6 +608,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         renderMovesTable();
         movesFileInput.value = "";
+        notifyMovesDataUpdated();
       };
       reader.readAsText(file);
     }
@@ -620,29 +640,7 @@ document.addEventListener("DOMContentLoaded", function () {
         window.URL.revokeObjectURL(url);
       }
       markChangesSaved();
-    }
-
-    async function exportToJs() {
-      const jsContent = `export const monsterMovesData = {
-        columns: ${JSON.stringify(columns, null, 2)},
-        data: ${JSON.stringify(data, null, 2)}
-      };`;
-
-      try {
-        await fs.writeTextFile("default-moves.js", jsContent, {
-          dir: fs.BaseDirectory.Runtime,
-        });
-      } catch (error) {
-        // Web fallback
-        const blob = new Blob([jsContent], { type: "application/javascript" });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "default-moves.js";
-        a.click();
-        window.URL.revokeObjectURL(url);
-      }
-      markChangesSaved();
+      notifyMovesDataUpdated();
     }
   });
 });
