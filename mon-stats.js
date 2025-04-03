@@ -188,7 +188,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Check which tab is active
         const activeTab = document.querySelector(".tab.active");
-        if (activeTab && activeTab.dataset.tab === "data" || activeTab.dataset.tab === "damage") {
+
+        if (activeTab && activeTab.dataset.tab === "stats") {
           exportToCsv(); // Save monster data
         }
       }
