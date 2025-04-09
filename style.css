@@ -318,21 +318,26 @@ tr:nth-child(even) {
 
 #moves-table th:nth-child(5),
 #moves-table td:nth-child(5) { /* Accuracy column */
-  min-width: 80px;
+  min-width: 50px;
 }
 
 #moves-table th:nth-child(6),
-#moves-table td:nth-child(6) { /* Type column */
-  min-width: 120px;
+#moves-table td:nth-child(6) { /* Priority column */
+  min-width: 50px;
 }
 
 #moves-table th:nth-child(7),
-#moves-table td:nth-child(7) { /* Class column */
-  min-width: 100px;
+#moves-table td:nth-child(7) { /* Type column */
+  min-width: 120px;
 }
 
 #moves-table th:nth-child(8),
-#moves-table td:nth-child(8) { /* Description column */
+#moves-table td:nth-child(8) { /* Class column */
+  min-width: 100px;
+}
+
+#moves-table th:nth-child(9),
+#moves-table td:nth-child(9) { /* Description column */
   min-width: 300px;
 }
 
