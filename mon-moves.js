@@ -126,12 +126,21 @@ document.addEventListener("DOMContentLoaded", function () {
       // Extract headers
       const headers = lines[0].split(",").map(header => header.trim());
 
-      // Set columns
-      columns = headers.map(header => ({
-        name: header,
+      // Set columns, excluding Implementation column for UI display
+      columns = headers
+        .filter(header => header !== "Implementation")
+        .map(header => ({
+          name: header,
+          type: ["Power", "Accuracy", "Stamina"].includes(header) ? "number" : "text",
+          editable: true
+        }));
+
+      // Add a new Status column for UI display
+      columns.push({
+        name: "Status",
         type: "text",
-        editable: true
-      }));
+        editable: false
+      });
 
       // Parse data
       data = [];
@@ -142,12 +151,21 @@ document.addEventListener("DOMContentLoaded", function () {
         const values = parseCsvLine(line);
         const rowData = {};
 
+        // Process all columns including Implementation (stored separately)
         headers.forEach((header, index) => {
           const value = values[index]?.trim() || "";
-          rowData[header] = columns.find(col => col.name === header)?.type === "number"
-            ? parseFloat(value) || 0
-            : value;
+          
+          // Store all original data including Implementation
+          rowData[header] = value;
+          
+          // Convert number types for UI display
+          if (["Power", "Accuracy", "Stamina"].includes(header)) {
+            rowData[header] = parseFloat(value) || 0;
+          }
         });
+
+        // Add Status field based on Implementation value
+        rowData["Status"] = rowData["Implementation"] || "No";
 
         data.push(rowData);
       }
@@ -205,23 +223,20 @@ document.addEventListener("DOMContentLoaded", function () {
     function addHeaderSortEvents() {
       const headers = movesTable.querySelectorAll("thead th");
       headers.forEach((header, index) => {
-        // Skip the last column (actions column)
-        if (index < headers.length - 1) {
-          header.style.cursor = "pointer";
-          header.onclick = function() {
-            const columnName = columns[index].name;
-            // Toggle sort direction if clicking the same column
-            if (columnToSort === columnName) {
-              columnDirection = !columnDirection;
-            } else {
-              columnToSort = columnName;
-              columnDirection = false; // default to ascending
-            }
+        header.style.cursor = "pointer";
+        header.onclick = function() {
+          const columnName = columns[index].name;
+          // Toggle sort direction if clicking the same column
+          if (columnToSort === columnName) {
+            columnDirection = !columnDirection;
+          } else {
+            columnToSort = columnName;
+            columnDirection = false; // default to ascending
+          }
 
-            // Sort the data
-            sortData(columnName, !columnDirection);
-          };
-        }
+          // Sort the data
+          sortData(columnName, !columnDirection);
+        };
       });
     }
 
@@ -498,6 +513,34 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             td.appendChild(select);
+          } else if (column.name === "Status") {
+            // Create status indicator
+            const isImplemented = row["Implementation"] === "Yes";
+            
+            if (isImplemented) {
+              // Create link to GitHub implementation
+              const link = document.createElement("a");
+              const monName = (row["Mon"] || "").toLowerCase();
+              const moveName = (row["Name"] || "").replace(/\s+/g, "");
+              const githubUrl = `https://github.com/sudoswap/chomp/tree/main/src/mons/${monName}/${moveName}.sol`;
+              
+              link.href = githubUrl;
+              link.target = "_blank";
+              link.textContent = "📜";
+              link.title = "View implementation on GitHub";
+              link.style.fontSize = "0.9rem";
+              link.style.textDecoration = "none";
+              link.style.display = "block";
+              link.style.textAlign = "center";
+              
+              td.appendChild(link);
+            } else {
+              // Show red X emoji
+              td.textContent = "❌";
+              td.title = "Not implemented yet";
+              td.style.fontSize = "0.9rem";
+              td.style.textAlign = "center";
+            }
           } else {
             if (column.editable) {
               td.contentEditable = true;
@@ -518,14 +561,8 @@ document.addEventListener("DOMContentLoaded", function () {
           tr.appendChild(td);
         });
 
-        // Add delete button
-        const actionsTd = document.createElement("td");
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "❌";
-        deleteBtn.style.backgroundColor = "#111";
-        deleteBtn.addEventListener("click", () => deleteRow(rowIndex));
-        actionsTd.appendChild(deleteBtn);
-        tr.appendChild(actionsTd);
+        // Remove the delete button column
+        // No actionsTd or deleteBtn added here
 
         movesTableBody.appendChild(tr);
       });
@@ -542,13 +579,6 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         data[rowIndex][column] = value;
       }
-      markUnsavedChanges();
-      notifyMovesDataUpdated();
-    }
-
-    function deleteRow(rowIndex) {
-      data.splice(rowIndex, 1);
-      renderMovesTable();
       markUnsavedChanges();
       notifyMovesDataUpdated();
     }
@@ -587,7 +617,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Reset columns
         columns = headers.map(header => ({
           name: header,
-          type: ["Power", "Accuracy", "Stamina"].includes(header) ? "number" : "text",
+          type: "text",
           editable: true
         }));
 
@@ -614,17 +644,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function exportToCsv() {
-      const headers = columns.map(col => col.name).join(",");
+      // Get all original headers from the first data row
+      const originalHeaders = Object.keys(data[0] || {}).filter(key => key !== "Status");
+      const csvHeaders = originalHeaders.join(",");
+      
       const rows = data.map(row => {
-        return columns.map(col => {
-          let value = row[col.name] !== undefined ? row[col.name] : "";
+        return originalHeaders.map(header => {
+          let value = row[header] !== undefined ? row[header] : "";
+          
           if (typeof value === "string" && (value.includes(",") || value.includes('"') || value.includes("\n"))) {
             value = `"${value.replace(/"/g, '""')}"`;
           }
           return value;
         }).join(",");
       });
-      const csvContent = [headers, ...rows].join("\n");
+      
+      const csvContent = [csvHeaders, ...rows].join("\n");
+      
       try {
         await fs.writeTextFile("moves.csv", csvContent, {
           dir: fs.BaseDirectory.Runtime,

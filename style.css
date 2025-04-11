@@ -308,12 +308,12 @@ tr:nth-child(even) {
 
 #moves-table th:nth-child(3),
 #moves-table td:nth-child(3) { /* Power column */
-  min-width: 80px;
+  min-width: 50px;
 }
 
 #moves-table th:nth-child(4),
 #moves-table td:nth-child(4) { /* Stamina column */
-  min-width: 100px;
+  min-width: 50px;
 }
 
 #moves-table th:nth-child(5),
