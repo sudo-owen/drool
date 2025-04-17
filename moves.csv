@@ -24,11 +24,11 @@ Deadlift,Pengym,0,2,100,0,Metal,Self,Increases ATK and DEF by 50%.,Yes
 Deep Freeze,Pengym,90,3,100,0,Ice,Physical,"If the target has Frostbite, consumes Frostbite and does double damage.",Yes
 Pistol Squat,Pengym,80,2,100,-1,Metal,Physical,"Deals damage, forces enemy mon to switch.",Yes
 Gachachacha,Sofabbi,0,3,100,0,Cyber,Physical,"Uniformly random power from 0 to 200. 5% chance to auto-KO self, 10% chance to auto-KO opponent.",No
-Guest Feature,Sofabbi,80,2,100,0,Cyber,Physical,Attack Type is set to be the first Type of another selected party member.,No
-Unexpected Carrot,Sofabbi,90,3,100,0,Nature,Physical,Deals damage.,Yes
-Snack Break,Sofabbi,0,1,100,0,Nature,Self,"Heal for 1/2 of health. Effectiveness reduces by half each time, until a min of 1/16.",No
+Guest Feature,Sofabbi,80,3,100,0,Cyber,Physical,Attack Type is set to be the first Type of another selected party member.,Yes
+Unexpected Carrot,Sofabbi,90,2,100,0,Nature,Physical,Deals damage.,Yes
+Snack Break,Sofabbi,0,1,100,0,Nature,Self,"Heal for 1/2 of health. Effectiveness reduces by half each time, until a min of 1/16.",Yes
 Electrocute,Volthare,90,2,100,0,Lightning,Special,"Deals damage, 10% chance to cause Zap. A Zapped mon skips its next turn.",No
-Apport,Volthare,30,1,100,0,Lightning,Special,"Deals damage, then switches out.",No
+In A Flash,Volthare,30,1,100,0,Lightning,Special,"Deals damage, then switches out.",No
 Tempest,Volthare,150,3,0,2,Lightning,Special,"+2 priority. If used during Storm, clears Storm and accuracy is 100%. Otherwise accuracy is 50%. Deals damage, 30% chance to cause Zap.",No
 Voltic Gambit,Volthare,60,0,100,0,Lightning,Special,Deals damage and inflicts Zap on self.,No
 Honey Bribe,Embursa,0,2,100,0,Wild,Other,Heals both self and opponent by 1/2 of max HP. (Each subsequent use cuts HP healed in half). Lowers opponent SpDEF by 50%.,No
