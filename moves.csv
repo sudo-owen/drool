@@ -31,7 +31,7 @@ Electrocute,Volthare,90,2,100,0,Lightning,Special,"Deals damage, 10% chance to c
 Round Trip,Volthare,30,1,100,0,Lightning,Special,"Deals damage, then switches out.",Yes
 Mega Star Blast,Volthare,150,3,0,2,Lightning,Special,"+2 priority. If used during Storm, clears Storm and accuracy is 100%. Otherwise accuracy is 50%. Deals damage, 30% chance to cause Zap.",Yes
 Dual Shock,Volthare,60,0,100,0,Lightning,Special,Deals damage and inflicts Zap on self.,Yes
-Honey Bribe,Embursa,0,2,100,0,Wild,Other,Heals both self and opponent by 1/2 of max HP. (Each subsequent use cuts HP healed in half). Lowers opponent SpDEF by 50%.,No
+Honey Bribe,Embursa,0,2,100,0,Wild,Other,Heals both self and opponent by 1/2 of max HP. (Each subsequent use cuts HP healed in half). Lowers opponent SpDEF by 50%.,Yes
 Set Ablaze,Embursa,90,3,100,0,Fire,Special,"Deals damage, 30% chance of Burn.",Yes
 Heat Beacon,Embursa,0,2,100,0,Fire,Self,+1 priority to next turn's move. Inflict Burn on the opposing mon.,No
-Q5,Embursa,150,5,100,0,Fire,Special,Deals damage in 5 turns and Burns the enemy.,No
+Q5,Embursa,150,5,100,0,Fire,Special,Deals damage in 5 turns and Burns the enemy.,Yes
